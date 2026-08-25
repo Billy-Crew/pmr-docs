@@ -1,0 +1,51 @@
+/* PMR 문서 커스텀 스타일 — 브랜드 폰트/색 정교화 */
+
+:root {
+  --md-text-font: "Noto Sans KR", "Pretendard", -apple-system, sans-serif;
+}
+
+/* h1: 브랜드 컬러 + 하단 라인 */
+.md-typeset h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0a4fa8;
+  border-bottom: 3px solid #0a4fa8;
+  padding-bottom: 0.3em;
+}
+
+/* h2: 좌측 강조 바 */
+.md-typeset h2 {
+  border-left: 5px solid #c2402a;
+  padding-left: 0.5em;
+}
+
+/* 인라인 코드 색상 */
+.md-typeset code {
+  color: #8a3324;
+}
+[data-md-color-scheme="slate"] .md-typeset code {
+  color: #f0b866;
+}
+
+/* 도식(figure) 컨테이너 */
+.md-typeset figure {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  padding: 16px 12px 6px;
+  background: #fdfdfe;
+  overflow-x: auto;
+}
+[data-md-color-scheme="slate"] .md-typeset figure {
+  background: #1b1f2a;
+}
+.md-typeset figure svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+.md-typeset figcaption {
+  font-size: 0.78rem;
+  color: var(--md-default-fg-color--light);
+  text-align: center;
+}

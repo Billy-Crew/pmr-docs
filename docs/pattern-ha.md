@@ -1,0 +1,42 @@
+# 정보원 이중화
+
+서로 다른 벤더의 피드를 Primary/Secondary로 받아 **표준 스펙(Standard SPEC)으로 정규화**한 뒤 단일 흐름으로 합치는 고가용성 패턴입니다.
+
+## 구성 — 해외 정보원 이중화 사례
+
+<figure markdown="span">
+<svg viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="30" y="40" width="140" height="56" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="100" y="63" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2402a">연합인포맥스 GTS</text>
+  <text x="100" y="82" text-anchor="middle" font-size="11" fill="#8c5040">Primary (메인)</text>
+  <rect x="30" y="150" width="140" height="56" rx="8" fill="#f4f8fc" stroke="#0a4fa8"/>
+  <text x="100" y="173" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Revoluos</text>
+  <text x="100" y="192" text-anchor="middle" font-size="11" fill="#3f5a78">Secondary (백업)</text>
+  <rect x="270" y="40" width="120" height="56" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.5"/>
+  <text x="330" y="73" text-anchor="middle" font-size="13" font-weight="bold">PMR</text>
+  <rect x="270" y="150" width="120" height="56" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.5"/>
+  <text x="330" y="183" text-anchor="middle" font-size="13" font-weight="bold">PMR</text>
+  <rect x="480" y="92" width="150" height="62" rx="8" fill="#eef4fb" stroke="#0a4fa8" stroke-width="1.6"/>
+  <text x="555" y="117" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Standard SPEC.</text>
+  <text x="555" y="137" text-anchor="middle" font-size="11" fill="#69788c">정규화 · 병합 PMR</text>
+  <rect x="690" y="97" width="110" height="52" rx="8" fill="#eaf5ef" stroke="#177245"/>
+  <text x="745" y="128" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">하위 시스템</text>
+  <line x1="170" y1="68" x2="268" y2="68" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="170" y1="178" x2="268" y2="178" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="390" y1="76" x2="478" y2="112" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="390" y1="170" x2="478" y2="136" stroke="#3d4a5c" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#a8)"/>
+  <line x1="630" y1="123" x2="688" y2="123" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+</svg>
+<figcaption>그림 10. 벤더 이중화 — 벤더별 수신 PMR이 표준 스펙으로 정규화 후 병합</figcaption>
+</figure>
+
+## 구현 포인트
+
+- **벤더별 수신 노드 분리** — 벤더 프로토콜(TCP 콜백 등)과 전문 차이를 각 수신 노드가 흡수합니다.
+- **Standard SPEC 정규화** — `modify` 룰로 가격단위·필드를 내부 표준으로 변환합니다. (예: 해외파생 시세 가격단위를 내부 기준으로 정규화하는 modify 룰 — 실사례 공수 1일)
+- **Primary 우선 / Secondary 대기** — 백업 흐름은 평시 대기하다 절체 시 동일 스펙으로 즉시 승계합니다.
+
+!!! note "벤더 추가 = 수신 노드 추가"
+
+    하위 시스템은 표준 스펙만 알면 되므로, 신규 정보원(MD-X 등) 추가가 하위 시스템 변경 없이 끝납니다. 실사례 공수: TCP 프로토콜 콜백 + 송수신 채널 설정 추가 1주.

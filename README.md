@@ -1,38 +1,47 @@
 # PMR Developer Documentation
 
 Kuanta **PMR (Programmable Message Router)** 개발자 문서입니다.
-전체 문서는 의존성 없는 단일 HTML 파일(`index.html`)로 되어 있습니다. (인라인 CSS·SVG·JS)
+[MkDocs Material](https://squidfunk.github.io/mkdocs-material/) 기반이며, 내용은 `docs/` 아래 마크다운으로 작성합니다.
 
-## 문서 보기 (로컬)
+- 🌐 배포 사이트: <https://billy-crew.github.io/pmr-docs/>
+- 📝 문서 원본: `docs/*.md`
+- 🎨 커스텀 스타일: `docs/stylesheets/extra.css`
+- 🗄️ 원본 단일 HTML(참고 보관): `original-html/pmr-docs.html`
 
-저장소를 클론한 뒤 `index.html`을 브라우저로 열면 됩니다.
+## 배포 (자동)
+
+`main` 브랜치에 push하면 GitHub Actions(`.github/workflows/deploy.yml`)가
+자동으로 MkDocs를 빌드해 GitHub Pages에 배포합니다. **글 쓰는 사람은 빌드를 신경 쓸 필요가 없습니다.**
+
+## 로컬 미리보기
 
 ```bash
-git clone https://github.com/Billy-Crew/pmr-docs.git
-cd pmr-docs
-# 브라우저로 열기 (Windows)
-start index.html
-# macOS: open index.html / Linux: xdg-open index.html
+python3 -m venv .venv && source .venv/bin/activate   # 최초 1회
+pip install -r requirements.txt
+mkdocs serve
+# 브라우저에서 http://127.0.0.1:8000/pmr-docs/ 접속
 ```
 
-## 나중에 웹으로 배포하기 (GitHub Pages)
+문서를 저장하면 브라우저가 자동 새로고침됩니다.
 
-현재는 **Private 저장소**라 보관만 하고 있습니다. 웹사이트로 공개하려면:
+## 문서 수정 방법
 
-### 방법 A — Public으로 전환 후 배포 (무료)
-1. GitHub 저장소 → **Settings → General → Danger Zone → Change visibility → Public**
-2. **Settings → Pages → Build and deployment**
-   - Source: **Deploy from a branch**
-   - Branch: **main** / 폴더: **/ (root)** → Save
-3. 1~2분 뒤 `https://billy-crew.github.io/pmr-docs/` 에서 확인
+자세한 내용은 [CONTRIBUTING.md](CONTRIBUTING.md)를 참고하세요. 요약:
 
-   > `index.html`이 루트에 있으므로 추가 설정 없이 바로 렌더링됩니다.
+- **가끔 고칠 때** — GitHub 웹에서 `docs/`의 `.md` 파일 → 연필(✏️) 아이콘 → 수정 → Commit
+- **자주 쓰는 개발자** — 로컬 clone + `mkdocs serve` 미리보기 + PR
+- **새 페이지 추가** — `docs/새파일.md` 생성 후 `mkdocs.yml`의 `nav:`에 한 줄 추가
 
-### 방법 B — Private 유지한 채 배포 (유료)
-- Private 저장소로 Pages를 쓰려면 조직을 **GitHub Team** 이상으로 업그레이드해야 합니다.
-- 접속 URL에 **인증/접근 제어**까지 걸려면 **GitHub Enterprise Cloud**가 필요합니다.
-- 사내용 접근 제어만 원하면 Cloudflare Access, Netlify 암호보호 등의 대안도 있습니다.
+## 구조
 
-## 문서 수정
-
-`index.html`을 직접 편집한 뒤 커밋/푸시하면 됩니다. Pages 배포 중이라면 푸시 즉시 자동 재빌드됩니다.
+```
+pmr-docs/
+├─ docs/                     # 문서 마크다운 (여기를 수정)
+│  ├─ index.md               # PMR이란 무엇인가 (첫 페이지)
+│  ├─ ...                    # 25개 섹션
+│  └─ stylesheets/extra.css  # 폰트·색 커스터마이즈
+├─ mkdocs.yml                # 사이트 설정 + 네비게이션(nav)
+├─ requirements.txt          # mkdocs-material
+├─ .github/workflows/deploy.yml   # 자동 배포
+└─ original-html/pmr-docs.html     # 이관 전 원본(보관용)
+```

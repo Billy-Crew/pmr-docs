@@ -1,0 +1,115 @@
+# 퀵 스타트: 첫 레이아웃
+
+실전 예제인 **KOSPI 체결(FILL) 흐름**을 그대로 따라가며, 레이아웃 → 토픽 → 액션의 구조를 익힙니다.
+
+## 목표 구성
+
+<figure markdown="span">
+<svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs>
+    <marker id="am" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c2402a"/></marker>
+    <marker id="au" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0a4fa8"/></marker>
+    <marker id="aq" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a6d1f"/></marker>
+  </defs>
+  <!-- KS_f -->
+  <rect x="30" y="90" width="150" height="64" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="105" y="116" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="105" y="136" text-anchor="middle" font-size="14" font-weight="bold" fill="#141d29">KS_f</text>
+  <!-- KS_f_emit -->
+  <rect x="330" y="90" width="150" height="64" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="405" y="116" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="405" y="136" text-anchor="middle" font-size="14" font-weight="bold" fill="#141d29">KS_f_emit</text>
+  <!-- KQP -->
+  <rect x="330" y="10" width="150" height="52" rx="8" fill="#f5f7f9" stroke="#0a4fa8" stroke-dasharray="5 3"/>
+  <text x="405" y="31" text-anchor="middle" font-size="12" fill="#69788c">KQP</text>
+  <text x="405" y="49" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">ksp_f</text>
+  <!-- qos -->
+  <rect x="330" y="180" width="150" height="56" rx="8" fill="#f5f7f9" stroke="#8a6d1f" stroke-dasharray="5 3"/>
+  <text x="405" y="202" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="405" y="221" text-anchor="middle" font-size="13" font-weight="bold" fill="#8a6d1f">KS_f_qos</text>
+  <!-- out -->
+  <rect x="660" y="90" width="180" height="64" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="750" y="117" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2402a">UDP 메인시세</text>
+  <text x="750" y="136" text-anchor="middle" font-size="11" fill="#8c5040">route_map 목적지</text>
+  <!-- edges -->
+  <line x1="180" y1="122" x2="328" y2="122" stroke="#c2402a" stroke-width="2.4" marker-end="url(#am)"/>
+  <text x="254" y="112" text-anchor="middle" font-size="11" fill="#c2402a">route</text>
+  <line x1="180" y1="104" x2="328" y2="42" stroke="#0a4fa8" stroke-width="2" marker-end="url(#au)"/>
+  <text x="235" y="58" text-anchor="middle" font-size="11" fill="#0a4fa8">route (raw) → 통합시세</text>
+  <line x1="405" y1="178" x2="405" y2="156" stroke="#8a6d1f" stroke-width="2" marker-end="url(#aq)"/>
+  <text x="500" y="205" font-size="11" fill="#8a6d1f">UDP 유량제어 (qos 룰)</text>
+  <line x1="480" y1="122" x2="658" y2="122" stroke="#c2402a" stroke-width="2.4" marker-end="url(#am)"/>
+  <text x="565" y="112" text-anchor="middle" font-size="11" fill="#c2402a">destinate → modify → emit</text>
+</svg>
+<figcaption>그림 2. KOSPI 체결(KS_f) Primary Flow — 수신 노드에서 통합시세 분기와 송출 노드로 라우팅</figcaption>
+</figure>
+
+*● UDP 메인시세 (Primary)  ● UDP 통합시세 (Secondary)  ● UDP 유량제어*
+
+## Step 1 — 수신 토픽 정의
+
+`KS_f` 토픽에 수신 채널을 묶고, 들어온 메시지마다 실행할 액션을 선언합니다.
+
+```lua
+-- KOSPI_KOSDAQ 레이아웃 중 …
+{
+    --== ----------------------------------------
+    --== KOSPI 주식 체결
+    KS_f:
+        recv2r: { 217,218,219,220,221,256 }
+        topics:
+            inbound: {
+                act 'log',    {to:'rcv0'}
+                act 'route',  {to:'kqp.ksp_f', raw:true}
+                act 'route',  {to:'KS_f_emit'}
+            }
+```
+
+*layout/kospi_kosdaq.moon — 수신 즉시 증적(log), 통합시세로 원본 분기(route raw), 송출 노드로 전달(route)*
+
+## Step 2 — 송출 토픽 정의
+
+```lua
+    KS_f_emit:
+        topics:
+            inbound: {
+                act 'qos',       {rule:'rule_qos_fill_issue_1', ms:5}
+                act 'log',       {to:'qos'}
+                act 'destinate', {rule:'rule_kskq_qf'}
+                act 'destinate', {rule:'route_map'}
+                act 'modify',    {rule:'wrsec1'}   -- 헤더 추가
+                act 'emit', {}
+            }
+}
+```
+
+*유량 제어(qos 5ms) → 증적 → 목적지 결정(destinate ×2) → 전문 가공(modify) → 송출(emit)*
+
+!!! note "액션은 선언 순서대로 실행됩니다."
+    하나의 메시지가 토픽에 들어오면 파이프라인 안의 액션 목록을 위에서 아래로 통과합니다. 필터에 걸리거나 `ignore` 처리되면 이후 액션은 실행되지 않습니다.
+
+## Step 3 — 런타임 적용
+
+작성한 레이아웃은 컴파일·재시작 없이 반영됩니다. 운영 중(Intra-day)에도 핫-리로딩으로 즉시 적용되며, 문제가 있으면 설정 복구만으로 초 단위 롤백이 가능합니다. 적용 전 [PMR Control](control.md)의 **메시지 흐름 미리보기(Preview)**로 변경 결과를 시각적으로 검증할 수 있습니다.
+
+## 변형: KOSDAQ 체결
+
+동일 구조에 채널 집합만 바꾸면 KOSDAQ 흐름이 됩니다. 이것이 "설정만 반영하는 단일 아키텍처"의 핵심입니다.
+
+```lua
+    KQ_f:
+        recv2r: { 231,232,233,234,235,257 }
+        topics:
+            inbound: {
+                act 'log',   {to:'rcv0'}
+                act 'route', {to:'KQ_f_emit'}
+            }
+
+    KQ_f_emit:
+        topics:
+            inbound: {
+                act 'destinate', {rule:'route_map'}
+                act 'modify',    {rule:'wrsec1'}
+                act 'emit', {}
+            }
+```

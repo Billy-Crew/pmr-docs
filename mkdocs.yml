@@ -1,0 +1,83 @@
+site_name: PMR Developer Documentation
+site_description: Kuanta PMR — Programmable Message Router 개발자 문서
+site_url: https://billy-crew.github.io/pmr-docs/
+
+theme:
+  name: material
+  language: ko
+  font:
+    text: Noto Sans KR
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 다크 모드로
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 라이트 모드로
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - 시작하기:
+      - PMR이란 무엇인가: index.md
+      - 핵심 용어: terms.md
+      - 아키텍처 개요: architecture.md
+      - 퀵 스타트 첫 레이아웃: quickstart.md
+  - 핵심 개념:
+      - VNT 런타임 엔진: vnt.md
+      - 레이아웃과 토픽: layout.md
+      - 액션 파이프라인: actions.md
+      - 룰 (Rules): rules.md
+      - Bolt-Log와 리플레이: boltlog.md
+  - 프로그래밍 가이드:
+      - Moonscript 기초: moonscript.md
+      - C 데이터 타입 다루기: cdata.md
+      - 전문 정의와 식별자: spec.md
+      - 가공·분배 함수: procdist.md
+  - 액션 레퍼런스:
+      - 액션 목록: actions-reference.md
+      - PROUTE 상세: proute.md
+  - 운영:
+      - 무중단 배포 (Hot-Reload): hotreload.md
+      - PMR Control 관제: control.md
+      - Watch List 모니터링: watchlist.md
+      - 메시지 검색과 리플레이: replay-ops.md
+  - 적용 사례 & 패턴:
+      - 통합시세 시스템 구성: case-integrated.md
+      - 2nd 레이어 격리 패턴: pattern-2nd.md
+      - 정보원 이중화: pattern-ha.md
+      - 확장 시나리오와 공수: estimate.md
+  - 부록:
+      - PMR vs 범용 메시지 브로커: compare.md
+      - FAQ: faq.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - toc:
+      permalink: true

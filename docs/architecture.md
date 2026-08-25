@@ -1,0 +1,74 @@
+# 아키텍처 개요
+
+PMR 노드는 **수신 → 식별/가공 → 분배**의 3단 파이프라인을 기본 구조로 하며, 각 단계는 전량 증적 로깅(Audit Logging)됩니다.
+
+<figure markdown="span">
+<svg viewBox="0 0 860 300" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker>
+  </defs>
+  <!-- 입력 -->
+  <rect x="10" y="105" width="110" height="56" rx="6" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="65" y="128" text-anchor="middle" font-size="13" fill="#c2402a" font-weight="bold">KRX / NXT</text>
+  <text x="65" y="147" text-anchor="middle" font-size="11" fill="#8c5040">UDP · TCP 시세</text>
+  <!-- PMR box -->
+  <rect x="160" y="40" width="540" height="190" rx="10" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text x="178" y="66" font-size="13" font-weight="bold" fill="#141d29">PMR 노드</text>
+  <!-- 3 stages -->
+  <rect x="190" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="255" y="120" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">수신</text>
+  <text x="255" y="140" text-anchor="middle" font-size="11" fill="#69788c">recv2r 채널</text>
+  <rect x="365" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="430" y="114" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">식별 / 가공</text>
+  <text x="430" y="133" text-anchor="middle" font-size="11" fill="#69788c">식별자·전문정의</text>
+  <text x="430" y="149" text-anchor="middle" font-size="11" fill="#69788c">가공함수(Process)</text>
+  <rect x="540" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="605" y="114" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">분배</text>
+  <text x="605" y="133" text-anchor="middle" font-size="11" fill="#69788c">분배함수(Distribute)</text>
+  <text x="605" y="149" text-anchor="middle" font-size="11" fill="#69788c">destinate · emit</text>
+  <line x1="120" y1="133" x2="188" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="320" y1="126" x2="363" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="495" y1="126" x2="538" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- audit loggers -->
+  <rect x="190" y="180" width="130" height="34" rx="5" fill="#eef4fb" stroke="#7f9dbf" stroke-dasharray="4 3"/>
+  <text x="255" y="202" text-anchor="middle" font-size="11.5" fill="#3d4a5c">Audit Logger (수신)</text>
+  <rect x="540" y="180" width="130" height="34" rx="5" fill="#eef4fb" stroke="#7f9dbf" stroke-dasharray="4 3"/>
+  <text x="605" y="202" text-anchor="middle" font-size="11.5" fill="#3d4a5c">Audit Logger (송출)</text>
+  <line x1="255" y1="162" x2="255" y2="178" stroke="#7f9dbf" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="605" y1="162" x2="605" y2="178" stroke="#7f9dbf" stroke-width="1.4" marker-end="url(#ar)"/>
+  <!-- 출력 -->
+  <rect x="740" y="60" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="86" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">하위 시스템</text>
+  <rect x="740" y="115" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="141" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">BP · 정보계</text>
+  <rect x="740" y="170" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="196" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">TCP 대외 송출</text>
+  <line x1="670" y1="112" x2="738" y2="86" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="670" y1="130" x2="738" y2="136" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="670" y1="150" x2="738" y2="188" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- logger -->
+  <rect x="330" y="250" width="230" height="38" rx="6" fill="#101720"/>
+  <text x="445" y="274" text-anchor="middle" font-size="12" fill="#d9e2ec">Logger — SAM File Sync / Commit</text>
+  <line x1="430" y1="230" x2="440" y2="248" stroke="#3d4a5c" stroke-width="1.4" marker-end="url(#ar)"/>
+</svg>
+<figcaption>그림 1. PMR 노드의 기본 3단 파이프라인과 전량 증적 구조</figcaption>
+</figure>
+
+## 고성능 로깅: MMF 버퍼 페이징
+
+Logger는 **SAM 파일 Sync/Commit**과 **버퍼 페이징(MMF, Memory-Mapped File)**을 사용합니다. 버퍼는 4M 바이트 단위(8/12/16… 확장)로 페이징되며, 매 프레임 4M 바이트 I/O로 커밋되어 초당 수십만 건의 시세 메시지도 유실 없이 디스크에 기록됩니다. 이 기록이 곧 [Bolt-Log](boltlog.md) 리플레이의 원천 데이터가 됩니다.
+
+## 프로그래머블 4대 구성 요소
+
+파이프라인의 각 단계는 아래 네 종류의 스크립트/설정으로 프로그래밍됩니다. 전부 런타임 교체가 가능합니다.
+
+| 구성 요소 | 역할 | 파일 예시 |
+|---|---|---|
+| **식별자 (Identifiers)** | 수신 전문이 어떤 메시지인지 판별 | `dst_fill_kospi.moon`, `dst_event_info_kospi.moon` |
+| **전문 정의 (Specifications)** | 전문 레이아웃(필드 구조) 선언 | `dst_i6a3s_etf_event.moon`, `dst_i8a3s_etf_shortsell_info.moon` |
+| **가공함수 (Process)** | 수신 전문의 변환·집계·생성 | `lfn_krx_fill.moon`, `gen_vi.moon`, `gen_sum01.moon` |
+| **분배함수 (Distribute)** | 목적지 결정과 송출 방식 제어 | `route_map`, `rule_kskq_qf` |
+
+## 노드 조합으로 시스템 구성
+
+하나의 업무 흐름은 보통 여러 PMR 노드의 체인으로 구성합니다. 예를 들어 KOSPI 체결 흐름은 수신 노드(`KS_f`) → 송출 노드(`KS_f_emit`)를 Primary로, QoS 노드(`KS_f_qos`)·후선처리 노드(`KS_f_2nd`)를 Secondary로 배치합니다. 전체 흐름도는 [퀵 스타트](quickstart.md)에서 다룹니다.

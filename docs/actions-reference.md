@@ -1,0 +1,41 @@
+# 액션 목록
+
+토픽 파이프라인에서 사용하는 표준 액션의 파라미터 레퍼런스입니다.
+
+| 액션 | 주요 파라미터 | 설명 |
+| --- | --- | --- |
+| `log` | `to` | 지정 증적 채널(`rcv0`, `qos` 등)에 메시지를 기록. Bolt-Log 기반 무손실. |
+| `route` | `to`, `raw` | 다른 토픽으로 전달. `to:'노드.토픽'`으로 외부 노드 참조, `raw:true`는 원본 그대로. |
+| `proute` | `identify`, `routes`, `hash`, `rule` | **P**rogrammable **ROUTE**. 페이로드 내용 기반 동적 라우팅. → [상세](proute.md) |
+| `filter` | `offset`, `length`, `filters` | 지정 위치 바이트가 필터 목록과 일치하는 메시지만 통과. |
+| `modify` | `rule` | 전문 가공(헤더 추가, 필드 변환, 가격단위 정규화, 변동분 산출 등)을 룰로 수행. |
+| `destinate` | `rule` | 송출 목적지 결정. 복수 선언 시 룰을 순차 적용(업무 룰 → 라우트 맵). |
+| `qos` | `rule`, `ms` | 유량 제어. `ms` 간격 기준으로 룰(예: `rule_qos_fill_issue_1`)에 따라 병합·간축. |
+| `process` | `rule` | 공유메모리(SHM) 갱신을 동반한 가공 처리. |
+| `emit` | — | destinate로 결정된 목적지에 최종 송출. 파이프라인의 마지막 액션. |
+
+## filter 사용 예
+
+```lua
+action 목록:
+
+    act 'filter', {
+        offset:  1
+        length:  2
+        filters: { 'A3' }        -- TR 그룹 A3만 통과
+    }
+
+    act 'filter', {
+        offset:  14
+        length:  2
+        filters: { 'G1' }        -- 보드 G1만 통과
+    }
+
+    act 'modify', { rule: 'diff_a3_only' }
+    act 'emit'
+```
+
+*custom01 노드 — 체결 전문 중 특정 보드만 걸러 변동분을 가공 송출*
+
+!!! note "필터는 겹쳐 쓸수록 좁아집니다"
+    filter를 연속 선언하면 AND 조건이 됩니다. "A3 전문 중 G1 보드"처럼 복합 조건을 액션 두 줄로 표현합니다.

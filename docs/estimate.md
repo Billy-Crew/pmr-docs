@@ -1,0 +1,54 @@
+# 확장 시나리오와 공수
+
+실제 제안·운영에서 접수된 요구사항과 PMR 기준 대응 공수입니다. "어떤 변경이 어떤 설정 작업으로 환원되는가"를 보여주는 실측 데이터입니다.
+
+## 실측 공수 사례 (2026.01 제안 기준)
+
+| 요구사항 | 대응 작업 | 공수 |
+| --- | --- | --- |
+| **기간계 가격 변동분 시세송신**<br>체결가가 직전 체결가·기준가 대비 변동 시에만 송신 | 송수신 채널 추가 + 송출용 전문 정의·재조립 스크립트 작성 | 채널 1일 + 스크립트 3일<br>(**총 1주**) |
+| **KRX 거래시간 확대 대응** (26.6.29) | 시세FEP: 변경 없음 / 통합시세: 양 거래소 간 보드ID·세션ID별 호가병합 설정 변경 | **1일** |
+| **NXT ETF 시장 추가** (26.9.14) | 시세FEP: 송수신 채널 설정 추가(`dict_channels`) / 통합시세: 전문 설정 추가(spec·identify·process) | 채널 **1일** + 전문 설정 |
+| **해외파생 시장·신규 정보원(MD-X) 추가** | 시세FEP: TCP 프로토콜 콜백 + 송수신 채널 설정 추가 / 지연시세: 설정 추가 | **1주** + 1일 |
+| **해외파생 가격단위 내부 기준 정규화** | 시세FEP: `modify` 액션 룰 추가 | **1일** |
+| **해외 정보원 2중화** (GTS ↔ Revoluos) | 벤더별 수신 노드 + Standard SPEC 정규화 (→ [정보원 이중화](pattern-ha.md)) | 구성 패턴 적용 |
+
+## 공수 산정 기준
+
+- **신규 시장 추가: 1 M/M** — 채널·spec·identify·process 설정 일체
+- **단순 변경: 0.1 M/M** — 룰 추가·설정값 변경 수준
+- 레거시 대비 시장 추가 대응 시간: **수주(Weeks) → 수일(Days)**
+
+## TCO 곡선
+
+<figure markdown="span">
+<svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <line x1="60" y1="200" x2="690" y2="200" stroke="#3d4a5c" stroke-width="1.4"/>
+  <line x1="60" y1="200" x2="60" y2="24" stroke="#3d4a5c" stroke-width="1.4"/>
+  <text x="30" y="110" font-size="11" fill="#69788c" transform="rotate(-90 30 110)">연간 비용</text>
+  <g font-size="10.5" fill="#69788c" text-anchor="middle">
+    <text x="115" y="220">초기 구축</text><text x="115" y="233">(CAPEX)</text>
+    <text x="220" y="220">1년차</text><text x="325" y="220">2년차</text>
+    <text x="430" y="220">3년차</text><text x="535" y="220">4년차</text><text x="640" y="220">5년차</text>
+  </g>
+  <g fill="#c2402a" opacity="0.75">
+    <rect x="90"  y="120" width="24" height="80"/><rect x="195" y="90" width="24" height="110"/>
+    <rect x="300" y="84" width="24" height="116"/><rect x="405" y="76" width="24" height="124"/>
+    <rect x="510" y="68" width="24" height="132"/><rect x="615" y="60" width="24" height="140"/>
+  </g>
+  <g fill="#0a4fa8" opacity="0.85">
+    <rect x="122" y="80"  width="24" height="120"/><rect x="227" y="160" width="24" height="40"/>
+    <rect x="332" y="178" width="24" height="22"/><rect x="437" y="188" width="24" height="12"/>
+    <rect x="542" y="190" width="24" height="10"/><rect x="647" y="192" width="24" height="8"/>
+  </g>
+  <line x1="300" y1="38" x2="300" y2="200" stroke="#177245" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="308" y="46" font-size="11" fill="#177245" font-weight="bold">24개월 내 BEP</text>
+  <g font-size="11.5">
+    <rect x="470" y="26" width="14" height="14" fill="#c2402a" opacity="0.75"/><text x="490" y="38" fill="#3d4a5c">Legacy (운영비 누증)</text>
+    <rect x="470" y="48" width="14" height="14" fill="#0a4fa8" opacity="0.85"/><text x="490" y="60" fill="#3d4a5c">PMR — 운영비 제로 수렴</text>
+  </g>
+</svg>
+<figcaption>그림 11. 레거시는 연차마다 운영비(OPEX)가 누증, PMR은 초기 구축 후 운영비가 제로에 수렴</figcaption>
+</figure>
+
+24개월 내 투자비를 전액 회수하고, 이후 유지보수 공수(M/M)의 90% 이상을 절감합니다.
