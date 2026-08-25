@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMR Developer Documentation — Programmable Message Router</title>
+<style>
+:root{
+  --ink:#141d29; --ink2:#3d4a5c; --ink3:#69788c;
+  --bg:#ffffff; --bg-side:#f5f7f9; --bg-code:#101720; --bg-note:#eef4fb;
+  --line:#e2e7ed; --line2:#cdd5de;
+  --acc:#0a4fa8;          /* 링크·강조 */
+  --flow-main:#c2402a;    /* UDP 메인시세 */
+  --flow-uni:#0a4fa8;     /* UDP 통합시세 */
+  --flow-qos:#8a6d1f;     /* UDP 유량제어 */
+  --flow-tcp:#177245;     /* TCP 송출 */
+  --code-txt:#d9e2ec; --code-key:#7fd1b9; --code-str:#f0b866; --code-com:#5f7186;
+  --mono:'SF Mono','JetBrains Mono',Consolas,'Nanum Gothic Coding',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;
+  color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.72;}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── 상단 바 ─────────────────────── */
+header.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;gap:14px;padding:0 20px;z-index:50}
+.topbar .logo{font-weight:800;letter-spacing:.4px;font-size:17px}
+.topbar .logo b{color:#7fd1b9}
+.topbar .crumb{font-size:13px;color:#9fb0c3}
+.topbar .ver{margin-left:auto;font-family:var(--mono);font-size:12px;color:#9fb0c3;
+  border:1px solid #33465c;border-radius:4px;padding:2px 8px}
+#menuBtn{display:none;background:none;border:1px solid #33465c;color:#cbd7e4;border-radius:4px;
+  padding:3px 9px;font-size:14px;cursor:pointer}
+
+/* ── 사이드바 ─────────────────────── */
+nav.side{position:fixed;top:52px;left:0;bottom:0;width:288px;background:var(--bg-side);
+  border-right:1px solid var(--line);overflow-y:auto;padding:18px 0 40px;z-index:40}
+.side .grp{margin-bottom:6px}
+.side .grp>span{display:block;padding:12px 22px 5px;font-size:11.5px;font-weight:800;color:var(--ink3);
+  letter-spacing:.09em;text-transform:uppercase}
+.side a{display:block;padding:5.5px 22px 5.5px 30px;font-size:14px;color:var(--ink2);border-left:3px solid transparent}
+.side a:hover{background:#eaeef3;text-decoration:none}
+.side a.on{color:var(--acc);font-weight:700;border-left-color:var(--acc);background:#e8eff9}
+
+/* ── 본문 ─────────────────────── */
+main{margin-left:288px;padding:84px 48px 90px;max-width:1020px}
+article{display:none}
+article.show{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;margin-bottom:6px}
+h1{font-size:30px;line-height:1.3;margin-bottom:14px;letter-spacing:-.01em}
+h2{font-size:21px;margin:42px 0 12px;padding-top:14px;border-top:1px solid var(--line);letter-spacing:-.01em}
+h3{font-size:16.5px;margin:26px 0 8px}
+p{margin:0 0 14px;color:var(--ink2)}
+p.lede{font-size:17px;color:var(--ink);margin-bottom:22px}
+ul.doc,ol.doc{margin:0 0 16px 22px;color:var(--ink2)}
+ul.doc li,ol.doc li{margin-bottom:6px}
+strong{color:var(--ink)}
+code.i{font-family:var(--mono);font-size:.86em;background:#eef1f5;border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;color:#8a3324}
+
+/* 코드 블록 */
+pre{background:var(--bg-code);color:var(--code-txt);border-radius:8px;padding:18px 20px;
+  font-family:var(--mono);font-size:13px;line-height:1.62;overflow-x:auto;margin:0 0 18px}
+pre b{color:var(--code-key);font-weight:600}
+pre i{color:var(--code-com);font-style:normal}
+pre em{color:var(--code-str);font-style:normal}
+.codecap{font-size:12.5px;color:var(--ink3);font-family:var(--mono);margin:-12px 0 20px;padding-left:2px}
+
+/* 표 */
+table{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:14px}
+th{background:var(--bg-side);text-align:left;font-weight:700;color:var(--ink);padding:9px 12px;
+  border:1px solid var(--line2);white-space:nowrap}
+td{padding:9px 12px;border:1px solid var(--line);color:var(--ink2);vertical-align:top}
+tr:nth-child(even) td{background:#fbfcfd}
+td b{color:var(--ink)}
+.tblcap{font-size:12.5px;color:var(--ink3);margin:-14px 0 22px}
+
+/* 콜아웃 */
+.note{background:var(--bg-note);border-left:4px solid var(--acc);border-radius:0 6px 6px 0;
+  padding:13px 16px;margin:0 0 18px;font-size:14.5px;color:var(--ink2)}
+.note b{color:var(--acc)}
+.warn{background:#fdf3ec;border-left:4px solid #c2402a;border-radius:0 6px 6px 0;
+  padding:13px 16px;margin:0 0 18px;font-size:14.5px;color:var(--ink2)}
+.warn b{color:#c2402a}
+
+/* 도식 컨테이너 */
+figure.diag{border:1px solid var(--line);border-radius:8px;padding:20px 16px 10px;margin:0 0 8px;background:#fdfdfe;overflow-x:auto}
+figure.diag svg{display:block;margin:0 auto;max-width:100%}
+figcaption{font-size:12.5px;color:var(--ink3);text-align:center;padding:8px 0 12px;margin-bottom:14px}
+
+/* 카드 그리드 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;margin:0 0 22px}
+.card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;background:#fff}
+.card h4{font-size:15px;margin-bottom:6px}
+.card h4 .no{font-family:var(--mono);color:var(--acc);margin-right:6px;font-size:13px}
+.card p{font-size:13.5px;margin:0;color:var(--ink2)}
+.card a{font-size:13px}
+
+/* prev/next */
+.pn{display:flex;justify-content:space-between;gap:14px;margin-top:56px;padding-top:20px;border-top:1px solid var(--line)}
+.pn a{flex:1;border:1px solid var(--line);border-radius:8px;padding:12px 16px;font-size:14px}
+.pn a:hover{border-color:var(--acc);text-decoration:none;background:#f7fafd}
+.pn a span{display:block;font-size:11.5px;color:var(--ink3);letter-spacing:.06em;margin-bottom:3px}
+.pn a.next{text-align:right}
+
+/* 범례 */
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink3);margin:6px 0 18px;padding-left:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:22px;height:0;border-top:3px solid;display:inline-block}
+
+@media(max-width:960px){
+  nav.side{transform:translateX(-100%);transition:transform .2s}
+  nav.side.open{transform:none}
+  main{margin-left:0;padding:76px 20px 70px}
+  #menuBtn{display:block}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button id="menuBtn">☰</button>
+  <span class="logo">Kuanta <b>PMR</b></span>
+  <span class="crumb">Developer Documentation</span>
+  <span class="ver">v2026.06</span>
+</header>
+
+<nav class="side" id="side">
+  <div class="grp"><span>시작하기</span>
+    <a href="#intro">PMR이란 무엇인가</a>
+    <a href="#terms">핵심 용어</a>
+    <a href="#arch">아키텍처 개요</a>
+    <a href="#quickstart">퀵 스타트: 첫 레이아웃</a>
+  </div>
+  <div class="grp"><span>핵심 개념</span>
+    <a href="#vnt">VNT 런타임 엔진</a>
+    <a href="#layout">레이아웃과 토픽</a>
+    <a href="#actions">액션 파이프라인</a>
+    <a href="#rules">룰 (Rules)</a>
+    <a href="#boltlog">Bolt-Log와 리플레이</a>
+  </div>
+  <div class="grp"><span>프로그래밍 가이드</span>
+    <a href="#moonscript">Moonscript 기초</a>
+    <a href="#cdata">C 데이터 타입 다루기</a>
+    <a href="#spec">전문 정의와 식별자</a>
+    <a href="#procdist">가공·분배 함수</a>
+  </div>
+  <div class="grp"><span>액션 레퍼런스</span>
+    <a href="#act-ref">액션 목록</a>
+    <a href="#proute">PROUTE 상세</a>
+  </div>
+  <div class="grp"><span>운영</span>
+    <a href="#hotreload">무중단 배포 (Hot-Reload)</a>
+    <a href="#control">PMR Control 관제</a>
+    <a href="#watchlist">Watch List 모니터링</a>
+    <a href="#replay-ops">메시지 검색과 리플레이</a>
+  </div>
+  <div class="grp"><span>적용 사례 &amp; 패턴</span>
+    <a href="#case-uni">통합시세 시스템 구성</a>
+    <a href="#pattern-2nd">2nd 레이어 격리 패턴</a>
+    <a href="#pattern-ha">정보원 이중화</a>
+    <a href="#estimate">확장 시나리오와 공수</a>
+  </div>
+  <div class="grp"><span>부록</span>
+    <a href="#compare">PMR vs 범용 메시지 브로커</a>
+    <a href="#faq">FAQ</a>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ═══════════════ 1. PMR이란 ═══════════════ -->
+<article id="intro">
+<div class="eyebrow">시작하기</div>
+<h1>PMR이란 무엇인가</h1>
+<p class="lede"><strong>PMR(Programmable Message Router)</strong>은 비동기식 프로그래머블 메시지 라우터로,
+증권 시세·주문과 같은 초저지연 미션-크리티컬 메시지를 <strong>코딩·컴파일·재시작 없이</strong>
+수신 → 식별/가공 → 분배하는 고성능 정보처리 시스템입니다.</p>
+
+<p>범용 메시지 브로커(Kafka 등)가 "메시지를 저장하고 전달하는 플랫폼"이라면, PMR은 그 위 계층인
+<strong>"메시지를 프로그래밍하는 라우터"</strong>입니다. 메시지 경로, 필터링, 전문 재조립, QoS(유량 제어)까지
+모든 처리 로직을 스크립트와 설정만으로 정의하며, 정의된 로직은 <strong>재시작 없이 런타임에 즉시 반영</strong>됩니다.</p>
+
+<h2>6가지 핵심 특징</h2>
+<div class="grid">
+  <div class="card"><h4><span class="no">01</span>동적 재구성 (Restructable)</h4>
+    <p>코딩 없이 런타임에 메시지 플로우를 즉시 변경합니다. 시장이 변할 때 소스 코드가 아니라 설정값이 바뀝니다.</p></div>
+  <div class="card"><h4><span class="no">02</span>표준화된 품질 (Unified Architecture)</h4>
+    <p>검증된 단일 엔진 위에 설정만 반영하는 구조로, 개발자 숙련도 편차 없이 균일하고 높은 가동률을 보장합니다.</p></div>
+  <div class="card"><h4><span class="no">03</span>제로-코드 유지보수</h4>
+    <p>JIT 기반 스크립트·설정으로 코딩-컴파일 절차가 생략되어, 시장 추가 대응이 수주(Weeks)에서 수일(Days)로 단축됩니다.</p></div>
+  <div class="card"><h4><span class="no">04</span>영속적 비용 절감 (TCO)</h4>
+    <p>신규 시장 추가 1 M/M, 단순 변경 0.1 M/M. 24개월 내 BEP 달성 후 유지보수 공수의 90% 이상을 절감합니다.</p></div>
+  <div class="card"><h4><span class="no">05</span>무중단 서비스 (Zero-Downtime)</h4>
+    <p>운영 중(Intra-day) 실시간 변경과 핫-리로딩으로 프로세스 재시작 없이 로직을 반영합니다.</p></div>
+  <div class="card"><h4><span class="no">06</span>마켓 에뮬레이션 (Full-Fidelity Replay)</h4>
+    <p>유실 없는 기록과 0.5×~20× 자유 배속 재생으로 장애 복기·정밀 분석·부하 테스트 환경을 제공합니다.</p></div>
+</div>
+
+<h2>기존 C 레거시와 무엇이 다른가</h2>
+<table>
+<tr><th>비교 항목</th><th>기존 레거시 (C-Base)</th><th>PMR</th></tr>
+<tr><td><b>처리 방식</b></td><td>Blocking, Single I/O</td><td>Event-Loop, Non-Blocking, Multi-I/O</td></tr>
+<tr><td><b>변경 적용 방식</b></td><td>Stop-and-Go (프로세스 재시작 필수)</td><td>Hot-Reloading (메모리 상 즉시 반영)</td></tr>
+<tr><td><b>서비스 연속성</b></td><td>서비스 일시 중단·세션 재연결 필요</td><td>Zero-Downtime (무중단 운영)</td></tr>
+<tr><td><b>리스크 관리</b></td><td>배포 실패 시 롤백에 장시간 소요</td><td>설정 즉시 복구로 초 단위 롤백</td></tr>
+<tr><td><b>운영 시간대</b></td><td>장 종료 후 혹은 새벽 작업 필수</td><td>운영 중(Intra-day) 실시간 대응</td></tr>
+</table>
+
+<h2>주요 개발·공급 실적</h2>
+<table>
+<tr><th>고객</th><th>적용 영역</th><th>비고</th></tr>
+<tr><td><b>코스콤</b></td><td>SOR 통합시세</td><td>공동개발</td></tr>
+<tr><td><b>대신증권</b></td><td>통합시세 정보분배</td><td>공급 (2024)</td></tr>
+<tr><td><b>우리투자증권</b></td><td>시세 대외계 (전사)</td><td>공급 (2025)</td></tr>
+<tr><td><b>빌리크루</b></td><td>임베디드 금융 인프라</td><td>자체 구축</td></tr>
+</table>
+<p class="tblcap">* 출처: Koscom, 대신증권, 우리투자증권</p>
+
+<p>KRX/NXT 시세 수신부터 SOR·MMF·Prop Trading·정보계·BP 분배, TCP 대외 송출, Node.js/Java 하위 시스템 연동까지
+전 구간을 PMR 노드들의 조합으로 구성합니다. 실제 구성 사례는
+<a href="#case-uni">통합시세 시스템 구성</a>을 참고하세요.</p>
+
+<div class="pn"><span></span><a class="next" href="#terms"><span>다음 →</span>핵심 용어</a></div>
+</article>
+
+<!-- ═══════════════ 2. 핵심 용어 ═══════════════ -->
+<article id="terms">
+<div class="eyebrow">시작하기</div>
+<h1>핵심 용어</h1>
+<p class="lede">PMR 문서 전반에서 사용되는 기본 용어입니다. Kafka의 Broker·Topic·Producer·Consumer에
+대응하는 개념이 무엇인지 함께 표기했습니다.</p>
+
+<h3>노드 (Node)</h3>
+<p>하나의 PMR 실행 인스턴스입니다. 단일 스탠드얼론 실행 파일(Single-Standalone Executable)로 배포되며,
+각 노드는 <a href="#control">RESTful API</a>를 기본 제공합니다. 여러 노드를 조합해 수신·가공·QoS·송출 등
+역할별 파이프라인을 구성합니다.</p>
+
+<h3>레이아웃 (Layout)</h3>
+<p>노드가 처리할 서비스 전체를 선언하는 최상위 설정 단위입니다. 예: <code class="i">KOSPI_KOSDAQ 레이아웃</code>.
+레이아웃 안에 여러 토픽이 정의되며, 레이아웃(서비스) 구성은 운영 중에도 직접 변경·적용할 수 있습니다.</p>
+
+<h3>토픽 (Topic)</h3>
+<p>메시지 흐름의 논리적 단위입니다. 예: <code class="i">KS_f</code>(KOSPI 주식 체결),
+<code class="i">KQ_f</code>(KOSDAQ 주식 체결), <code class="i">KS_f_emit</code>(송출 단계).
+Kafka의 토픽이 "저장되는 이벤트 로그"라면, PMR의 토픽은 <strong>액션 파이프라인이 실행되는 처리 스테이지</strong>입니다.
+토픽은 <code class="i">inbound</code> 등의 방향별 액션 목록을 갖습니다.</p>
+
+<h3>채널 (Channel)</h3>
+<p>메시지가 드나드는 물리 입출력 지점입니다. <code class="i">recv2r: { 217,218,219,220,221,256 }</code>처럼
+수신 채널 번호 집합으로 선언하며, UDP 멀티캐스트·TCP 등 프로토콜별 송수신 채널을
+<code class="i">dict_channels</code> 설정으로 추가합니다.</p>
+
+<h3>액션 (Action)</h3>
+<p>토픽 안에서 메시지 한 건마다 순서대로 실행되는 처리 명령입니다.
+<code class="i">log</code>, <code class="i">route</code>, <code class="i">proute</code>, <code class="i">filter</code>,
+<code class="i">modify</code>, <code class="i">destinate</code>, <code class="i">qos</code>,
+<code class="i">process</code>, <code class="i">emit</code> 등이 있습니다.
+→ <a href="#act-ref">액션 레퍼런스</a></p>
+
+<h3>룰 (Rule)</h3>
+<p>액션에 주입하는 재사용 가능한 로직 단위입니다. 이름으로 참조하며
+(<code class="i">act 'modify', {rule:'wrsec1'}</code>), 함수형 룰은 Moonscript로 직접 작성합니다.
+→ <a href="#rules">룰</a></p>
+
+<h3>VNT</h3>
+<p>PMR의 코어 런타임 엔진. libevent 기반 비동기 이벤트 루프와 LuaJIT 2.1 JIT 컴파일러의 조합으로,
+"Node.js like, but Lua"로 요약됩니다. → <a href="#vnt">VNT 런타임 엔진</a></p>
+
+<h3>Bolt-Log</h3>
+<p>모든 메시지를 유실 없이 기록하는 고성능 Key-Value 파일 DB. 랜덤 액세스와 2차 인덱스를 제한 없이 제공하며
+리커버리·리플레이·부하 테스트의 기반입니다. → <a href="#boltlog">Bolt-Log와 리플레이</a></p>
+
+<h3>Kafka 용어 대응표</h3>
+<table>
+<tr><th>Kafka</th><th>PMR</th><th>차이점</th></tr>
+<tr><td>Broker (클러스터)</td><td><b>노드 (파이프라인 조합)</b></td><td>저장 중심 클러스터가 아닌, 처리 역할별 경량 노드 체인</td></tr>
+<tr><td>Topic (이벤트 로그)</td><td><b>토픽 (처리 스테이지)</b></td><td>저장 단위가 아니라 액션이 실행되는 흐름 단위</td></tr>
+<tr><td>Producer / Consumer</td><td><b>채널 (recv / emit)</b></td><td>클라이언트 라이브러리 없이 UDP/TCP 채널 설정으로 연결</td></tr>
+<tr><td>Streams / ksqlDB</td><td><b>액션 + 룰 (Moonscript)</b></td><td>별도 처리 클러스터 없이 라우터 내부에서 인라인 가공</td></tr>
+<tr><td>Log Retention / Replay</td><td><b>Bolt-Log</b></td><td>2차 인덱스 기반 검색과 배속 재생(0.5×~20×) 내장</td></tr>
+</table>
+
+<div class="pn"><a href="#intro"><span>← 이전</span>PMR이란 무엇인가</a><a class="next" href="#arch"><span>다음 →</span>아키텍처 개요</a></div>
+</article>
+
+<!-- ═══════════════ 3. 아키텍처 개요 ═══════════════ -->
+<article id="arch">
+<div class="eyebrow">시작하기</div>
+<h1>아키텍처 개요</h1>
+<p class="lede">PMR 노드는 <strong>수신 → 식별/가공 → 분배</strong>의 3단 파이프라인을 기본 구조로 하며,
+각 단계는 전량 증적 로깅(Audit Logging)됩니다.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 860 300" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker>
+  </defs>
+  <!-- 입력 -->
+  <rect x="10" y="105" width="110" height="56" rx="6" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="65" y="128" text-anchor="middle" font-size="13" fill="#c2402a" font-weight="bold">KRX / NXT</text>
+  <text x="65" y="147" text-anchor="middle" font-size="11" fill="#8c5040">UDP · TCP 시세</text>
+  <!-- PMR box -->
+  <rect x="160" y="40" width="540" height="190" rx="10" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text x="178" y="66" font-size="13" font-weight="bold" fill="#141d29">PMR 노드</text>
+  <!-- 3 stages -->
+  <rect x="190" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="255" y="120" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">수신</text>
+  <text x="255" y="140" text-anchor="middle" font-size="11" fill="#69788c">recv2r 채널</text>
+  <rect x="365" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="430" y="114" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">식별 / 가공</text>
+  <text x="430" y="133" text-anchor="middle" font-size="11" fill="#69788c">식별자·전문정의</text>
+  <text x="430" y="149" text-anchor="middle" font-size="11" fill="#69788c">가공함수(Process)</text>
+  <rect x="540" y="90" width="130" height="72" rx="6" fill="#fff" stroke="#0a4fa8"/>
+  <text x="605" y="114" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">분배</text>
+  <text x="605" y="133" text-anchor="middle" font-size="11" fill="#69788c">분배함수(Distribute)</text>
+  <text x="605" y="149" text-anchor="middle" font-size="11" fill="#69788c">destinate · emit</text>
+  <line x1="120" y1="133" x2="188" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="320" y1="126" x2="363" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="495" y1="126" x2="538" y2="126" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- audit loggers -->
+  <rect x="190" y="180" width="130" height="34" rx="5" fill="#eef4fb" stroke="#7f9dbf" stroke-dasharray="4 3"/>
+  <text x="255" y="202" text-anchor="middle" font-size="11.5" fill="#3d4a5c">Audit Logger (수신)</text>
+  <rect x="540" y="180" width="130" height="34" rx="5" fill="#eef4fb" stroke="#7f9dbf" stroke-dasharray="4 3"/>
+  <text x="605" y="202" text-anchor="middle" font-size="11.5" fill="#3d4a5c">Audit Logger (송출)</text>
+  <line x1="255" y1="162" x2="255" y2="178" stroke="#7f9dbf" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="605" y1="162" x2="605" y2="178" stroke="#7f9dbf" stroke-width="1.4" marker-end="url(#ar)"/>
+  <!-- 출력 -->
+  <rect x="740" y="60" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="86" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">하위 시스템</text>
+  <rect x="740" y="115" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="141" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">BP · 정보계</text>
+  <rect x="740" y="170" width="110" height="42" rx="6" fill="#eaf5ef" stroke="#177245"/>
+  <text x="795" y="196" text-anchor="middle" font-size="12" fill="#177245" font-weight="bold">TCP 대외 송출</text>
+  <line x1="670" y1="112" x2="738" y2="86" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="670" y1="130" x2="738" y2="136" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="670" y1="150" x2="738" y2="188" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- logger -->
+  <rect x="330" y="250" width="230" height="38" rx="6" fill="#101720"/>
+  <text x="445" y="274" text-anchor="middle" font-size="12" fill="#d9e2ec">Logger — SAM File Sync / Commit</text>
+  <line x1="430" y1="230" x2="440" y2="248" stroke="#3d4a5c" stroke-width="1.4" marker-end="url(#ar)"/>
+</svg>
+<figcaption>그림 1. PMR 노드의 기본 3단 파이프라인과 전량 증적 구조</figcaption>
+</figure>
+
+<h2>고성능 로깅: MMF 버퍼 페이징</h2>
+<p>Logger는 <strong>SAM 파일 Sync/Commit</strong>과 <strong>버퍼 페이징(MMF, Memory-Mapped File)</strong>을 사용합니다.
+버퍼는 4M 바이트 단위(8/12/16… 확장)로 페이징되며, 매 프레임 4M 바이트 I/O로 커밋되어
+초당 수십만 건의 시세 메시지도 유실 없이 디스크에 기록됩니다. 이 기록이 곧
+<a href="#boltlog">Bolt-Log</a> 리플레이의 원천 데이터가 됩니다.</p>
+
+<h2>프로그래머블 4대 구성 요소</h2>
+<p>파이프라인의 각 단계는 아래 네 종류의 스크립트/설정으로 프로그래밍됩니다. 전부 런타임 교체가 가능합니다.</p>
+<table>
+<tr><th>구성 요소</th><th>역할</th><th>파일 예시</th></tr>
+<tr><td><b>식별자 (Identifiers)</b></td><td>수신 전문이 어떤 메시지인지 판별</td><td><code class="i">dst_fill_kospi.moon</code>, <code class="i">dst_event_info_kospi.moon</code></td></tr>
+<tr><td><b>전문 정의 (Specifications)</b></td><td>전문 레이아웃(필드 구조) 선언</td><td><code class="i">dst_i6a3s_etf_event.moon</code>, <code class="i">dst_i8a3s_etf_shortsell_info.moon</code></td></tr>
+<tr><td><b>가공함수 (Process)</b></td><td>수신 전문의 변환·집계·생성</td><td><code class="i">lfn_krx_fill.moon</code>, <code class="i">gen_vi.moon</code>, <code class="i">gen_sum01.moon</code></td></tr>
+<tr><td><b>분배함수 (Distribute)</b></td><td>목적지 결정과 송출 방식 제어</td><td><code class="i">route_map</code>, <code class="i">rule_kskq_qf</code></td></tr>
+</table>
+
+<h2>노드 조합으로 시스템 구성</h2>
+<p>하나의 업무 흐름은 보통 여러 PMR 노드의 체인으로 구성합니다. 예를 들어 KOSPI 체결 흐름은
+수신 노드(<code class="i">KS_f</code>) → 송출 노드(<code class="i">KS_f_emit</code>)를 Primary로,
+QoS 노드(<code class="i">KS_f_qos</code>)·후선처리 노드(<code class="i">KS_f_2nd</code>)를 Secondary로 배치합니다.
+전체 흐름도는 <a href="#quickstart">퀵 스타트</a>에서 다룹니다.</p>
+
+<div class="pn"><a href="#terms"><span>← 이전</span>핵심 용어</a><a class="next" href="#quickstart"><span>다음 →</span>퀵 스타트: 첫 레이아웃</a></div>
+</article>
+
+<!-- ═══════════════ 4. 퀵 스타트 ═══════════════ -->
+<article id="quickstart">
+<div class="eyebrow">시작하기</div>
+<h1>퀵 스타트: 첫 레이아웃</h1>
+<p class="lede">실전 예제인 <strong>KOSPI 체결(FILL) 흐름</strong>을 그대로 따라가며,
+레이아웃 → 토픽 → 액션의 구조를 익힙니다.</p>
+
+<h2>목표 구성</h2>
+<figure class="diag">
+<svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs>
+    <marker id="am" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c2402a"/></marker>
+    <marker id="au" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0a4fa8"/></marker>
+    <marker id="aq" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a6d1f"/></marker>
+  </defs>
+  <!-- KS_f -->
+  <rect x="30" y="90" width="150" height="64" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="105" y="116" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="105" y="136" text-anchor="middle" font-size="14" font-weight="bold" fill="#141d29">KS_f</text>
+  <!-- KS_f_emit -->
+  <rect x="330" y="90" width="150" height="64" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="405" y="116" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="405" y="136" text-anchor="middle" font-size="14" font-weight="bold" fill="#141d29">KS_f_emit</text>
+  <!-- KQP -->
+  <rect x="330" y="10" width="150" height="52" rx="8" fill="#f5f7f9" stroke="#0a4fa8" stroke-dasharray="5 3"/>
+  <text x="405" y="31" text-anchor="middle" font-size="12" fill="#69788c">KQP</text>
+  <text x="405" y="49" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">ksp_f</text>
+  <!-- qos -->
+  <rect x="330" y="180" width="150" height="56" rx="8" fill="#f5f7f9" stroke="#8a6d1f" stroke-dasharray="5 3"/>
+  <text x="405" y="202" text-anchor="middle" font-size="12" fill="#69788c">PMR</text>
+  <text x="405" y="221" text-anchor="middle" font-size="13" font-weight="bold" fill="#8a6d1f">KS_f_qos</text>
+  <!-- out -->
+  <rect x="660" y="90" width="180" height="64" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="750" y="117" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2402a">UDP 메인시세</text>
+  <text x="750" y="136" text-anchor="middle" font-size="11" fill="#8c5040">route_map 목적지</text>
+  <!-- edges -->
+  <line x1="180" y1="122" x2="328" y2="122" stroke="#c2402a" stroke-width="2.4" marker-end="url(#am)"/>
+  <text x="254" y="112" text-anchor="middle" font-size="11" fill="#c2402a">route</text>
+  <line x1="180" y1="104" x2="328" y2="42" stroke="#0a4fa8" stroke-width="2" marker-end="url(#au)"/>
+  <text x="235" y="58" text-anchor="middle" font-size="11" fill="#0a4fa8">route (raw) → 통합시세</text>
+  <line x1="405" y1="178" x2="405" y2="156" stroke="#8a6d1f" stroke-width="2" marker-end="url(#aq)"/>
+  <text x="500" y="205" font-size="11" fill="#8a6d1f">UDP 유량제어 (qos 룰)</text>
+  <line x1="480" y1="122" x2="658" y2="122" stroke="#c2402a" stroke-width="2.4" marker-end="url(#am)"/>
+  <text x="565" y="112" text-anchor="middle" font-size="11" fill="#c2402a">destinate → modify → emit</text>
+</svg>
+<figcaption>그림 2. KOSPI 체결(KS_f) Primary Flow — 수신 노드에서 통합시세 분기와 송출 노드로 라우팅</figcaption>
+</figure>
+<div class="legend">
+  <span><i style="border-color:#c2402a"></i>UDP 메인시세 (Primary)</span>
+  <span><i style="border-color:#0a4fa8"></i>UDP 통합시세 (Secondary)</span>
+  <span><i style="border-color:#8a6d1f"></i>UDP 유량제어</span>
+</div>
+
+<h2>Step 1 — 수신 토픽 정의</h2>
+<p><code class="i">KS_f</code> 토픽에 수신 채널을 묶고, 들어온 메시지마다 실행할 액션을 선언합니다.</p>
+<pre><i>-- KOSPI_KOSDAQ 레이아웃 중 …</i>
+{
+    <i>--== ----------------------------------------</i>
+    <i>--== KOSPI 주식 체결</i>
+    <b>KS_f</b>:
+        recv2r: { 217,218,219,220,221,256 }
+        topics:
+            inbound: {
+                act <em>'log'</em>,    {to:<em>'rcv0'</em>}
+                act <em>'route'</em>,  {to:<em>'kqp.ksp_f'</em>, raw:true}
+                act <em>'route'</em>,  {to:<em>'KS_f_emit'</em>}
+            }</pre>
+<p class="codecap">layout/kospi_kosdaq.moon — 수신 즉시 증적(log), 통합시세로 원본 분기(route raw), 송출 노드로 전달(route)</p>
+
+<h2>Step 2 — 송출 토픽 정의</h2>
+<pre>    <b>KS_f_emit</b>:
+        topics:
+            inbound: {
+                act <em>'qos'</em>,       {rule:<em>'rule_qos_fill_issue_1'</em>, ms:5}
+                act <em>'log'</em>,       {to:<em>'qos'</em>}
+                act <em>'destinate'</em>, {rule:<em>'rule_kskq_qf'</em>}
+                act <em>'destinate'</em>, {rule:<em>'route_map'</em>}
+                act <em>'modify'</em>,    {rule:<em>'wrsec1'</em>}   <i>-- 헤더 추가</i>
+                act <em>'emit'</em>, {}
+            }
+}</pre>
+<p class="codecap">유량 제어(qos 5ms) → 증적 → 목적지 결정(destinate ×2) → 전문 가공(modify) → 송출(emit)</p>
+
+<div class="note"><b>액션은 선언 순서대로 실행됩니다.</b> 하나의 메시지가 토픽에 들어오면
+파이프라인 안의 액션 목록을 위에서 아래로 통과합니다. 필터에 걸리거나 <code class="i">ignore</code> 처리되면
+이후 액션은 실행되지 않습니다.</div>
+
+<h2>Step 3 — 런타임 적용</h2>
+<p>작성한 레이아웃은 컴파일·재시작 없이 반영됩니다. 운영 중(Intra-day)에도 핫-리로딩으로
+즉시 적용되며, 문제가 있으면 설정 복구만으로 초 단위 롤백이 가능합니다.
+적용 전 <a href="#control">PMR Control</a>의 <strong>메시지 흐름 미리보기(Preview)</strong>로
+변경 결과를 시각적으로 검증할 수 있습니다.</p>
+
+<h2>변형: KOSDAQ 체결</h2>
+<p>동일 구조에 채널 집합만 바꾸면 KOSDAQ 흐름이 됩니다. 이것이 "설정만 반영하는 단일 아키텍처"의 핵심입니다.</p>
+<pre>    <b>KQ_f</b>:
+        recv2r: { 231,232,233,234,235,257 }
+        topics:
+            inbound: {
+                act <em>'log'</em>,   {to:<em>'rcv0'</em>}
+                act <em>'route'</em>, {to:<em>'KQ_f_emit'</em>}
+            }
+
+    <b>KQ_f_emit</b>:
+        topics:
+            inbound: {
+                act <em>'destinate'</em>, {rule:<em>'route_map'</em>}
+                act <em>'modify'</em>,    {rule:<em>'wrsec1'</em>}
+                act <em>'emit'</em>, {}
+            }</pre>
+
+<div class="pn"><a href="#arch"><span>← 이전</span>아키텍처 개요</a><a class="next" href="#vnt"><span>다음 →</span>VNT 런타임 엔진</a></div>
+</article>
+
+<!-- ═══════════════ 5. VNT ═══════════════ -->
+<article id="vnt">
+<div class="eyebrow">핵심 개념</div>
+<h1>VNT 런타임 엔진</h1>
+<p class="lede"><strong>VNT(eVeNT)</strong>는 PMR의 코어 엔진입니다. libevent/libuv 계열의 검증된 비동기 이벤트 루프에
+LuaJIT 2.1 JIT 컴파일러를 결합한 구조로, 한 문장으로 <strong>"Node.js like, but Lua"</strong>입니다.</p>
+
+<h2>비동기 이벤트 루프</h2>
+<ul class="doc">
+  <li><strong>Libevent / Libuv battle-tested core</strong> 기반</li>
+  <li><strong>Non-Blocking I/O</strong> — epoll, kqueue 등 OS 네이티브 I/O 폴링</li>
+  <li><strong>C/C++ Native Functions</strong> 직접 호출</li>
+  <li><strong>Single-Standalone Executable</strong> — 단일 실행 파일 배포</li>
+</ul>
+
+<figure class="diag">
+<svg viewBox="0 0 840 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="30" y="95" width="130" height="66" rx="8" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text x="95" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">Event Queue</text>
+  <text x="95" y="142" text-anchor="middle" font-size="11" fill="#69788c">수신 이벤트 적재</text>
+  <circle cx="330" cy="128" r="52" fill="#eef4fb" stroke="#0a4fa8" stroke-width="2"/>
+  <text x="330" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Event</text>
+  <text x="330" y="141" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Loop</text>
+  <rect x="530" y="20" width="180" height="58" rx="8" fill="#fff" stroke="#8a6d1f"/>
+  <text x="620" y="44" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#8a6d1f">Task Queue</text>
+  <text x="620" y="63" text-anchor="middle" font-size="11" fill="#69788c">Blocking ops → Worker Pool</text>
+  <rect x="530" y="100" width="180" height="58" rx="8" fill="#fff" stroke="#177245"/>
+  <text x="620" y="124" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Non-blocking ops</text>
+  <text x="620" y="143" text-anchor="middle" font-size="11" fill="#69788c">즉시 콜백 처리</text>
+  <rect x="530" y="180" width="180" height="58" rx="8" fill="#fff" stroke="#0a4fa8"/>
+  <text x="620" y="204" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">I/O Polling</text>
+  <text x="620" y="223" text-anchor="middle" font-size="11" fill="#69788c">epoll · kqueue (libevent)</text>
+  <rect x="742" y="30" width="80" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text x="782" y="49" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Worker</text>
+  <text x="782" y="61" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Thread Pool</text>
+  <line x1="160" y1="128" x2="276" y2="128" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a2)"/>
+  <line x1="372" y1="103" x2="528" y2="52" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line x1="382" y1="128" x2="528" y2="128" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line x1="372" y1="153" x2="528" y2="206" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line x1="710" y1="49" x2="740" y2="49" stroke="#3d4a5c" stroke-width="1.4" marker-end="url(#a2)"/>
+</svg>
+<figcaption>그림 3. VNT 비동기 이벤트 루프 — Blocking 작업은 워커 풀로, I/O는 OS 네이티브 폴링으로 위임</figcaption>
+</figure>
+
+<h2>JIT Powered</h2>
+<ul class="doc">
+  <li><strong>LuaJIT 2.1</strong> 기반 Trace JIT</li>
+  <li><strong>FFI</strong> (Foreign Function Interface) — C 구조체·함수를 제로 오버헤드로 바인딩</li>
+  <li><strong>Extension: Native Function Slots</strong> — C/C++ 네이티브 함수 슬롯 확장</li>
+</ul>
+
+<figure class="diag">
+<svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="20" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
+  <text x="85" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.lua / .moon</text>
+  <text x="85" y="76" text-anchor="middle" font-size="11" fill="#69788c">스크립트 소스</text>
+  <rect x="230" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
+  <text x="295" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.bc</text>
+  <text x="295" y="76" text-anchor="middle" font-size="11" fill="#69788c">바이트코드</text>
+  <rect x="440" y="34" width="130" height="54" rx="7" fill="#eef4fb" stroke="#0a4fa8"/>
+  <text x="505" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">JIT Compiler</text>
+  <text x="505" y="76" text-anchor="middle" font-size="11" fill="#69788c">Trace JIT (런타임)</text>
+  <rect x="630" y="34" width="115" height="54" rx="7" fill="#eaf5ef" stroke="#177245"/>
+  <text x="687" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#177245">Native Code</text>
+  <text x="687" y="76" text-anchor="middle" font-size="11" fill="#69788c">C/C++ 급 속도</text>
+  <line x1="150" y1="61" x2="228" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+  <text x="189" y="52" text-anchor="middle" font-size="10.5" fill="#69788c">Compiler</text>
+  <line x1="360" y1="61" x2="438" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+  <line x1="570" y1="61" x2="628" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+</svg>
+<figcaption>그림 4. 스크립트 → 바이트코드 → 런타임 JIT 네이티브 코드 변환 흐름</figcaption>
+</figure>
+
+<h2>VNT vs Node.js</h2>
+<p>VNT는 Node.js와 같은 "이벤트 루프 + 웹 스크립트" 패러다임을 따르되,
+C/C++ 네트워크 애플리케이션을 대체하기 위한 경량·저지연 특성에 최적화되어 있습니다.</p>
+<table>
+<tr><th>항목</th><th>Node.js</th><th>VNT</th><th>비고</th></tr>
+<tr><td><b>방식</b></td><td>Event Loop with Web-Script</td><td>Event Loop with Web-Script</td><td>경량 이벤트 루프</td></tr>
+<tr><td><b>Script</b></td><td>JavaScript</td><td>Lua (Moonscript)</td><td>웹 스크립트</td></tr>
+<tr><td><b>JIT Core</b></td><td>V8</td><td>LuaJIT</td><td>경량 메모리, C/C++에 준하는 실행 속도</td></tr>
+<tr><td><b>Biz. Section</b></td><td>Web Application</td><td>Network Application</td><td>C/C++ 네트워크 앱 대체 용도</td></tr>
+<tr><td><b>Performance</b></td><td>Method JIT</td><td>Trace JIT</td><td></td></tr>
+<tr><td><b>Memory Overhead</b></td><td>수십 ~ 100 MB 이상</td><td><b>10 MB 이하</b></td><td>경량 메모리 풋프린트</td></tr>
+<tr><td><b>C Native Binding</b></td><td>N-API, Wrapping</td><td><b>FFI, Zero-Overhead</b></td><td>C/C++ 리소스와 동일 수준의 바인딩</td></tr>
+<tr><td><b>Runtime Size</b></td><td>수십 MB 이상</td><td><b>1 MB 이하</b></td><td>C/C++ 수준의 경량 런타임</td></tr>
+<tr><td><b>Raw C Data Access</b></td><td>JS 추상화 필요</td><td><b>Native</b></td><td>C Structure에 직접 액세스</td></tr>
+</table>
+
+<div class="note"><b>왜 Lua인가?</b> 시세 전문은 고정 오프셋의 C 구조체 바이너리입니다. LuaJIT FFI는
+이 구조체에 추상화 계층 없이 직접 접근하므로, 스크립트 언어의 생산성과 C의 처리 속도를 동시에 얻습니다.
+→ <a href="#cdata">C 데이터 타입 다루기</a></div>
+
+<h2>제품군에서의 위치</h2>
+<p>VNT는 PMR뿐 아니라 통합시세 엔진 <strong>KQP</strong>, 프로그래머블 OMS <strong>POMS</strong>,
+AI 기반 슬리피지 최적화 <strong>DeepVWAP(AI-OMS)</strong>의 공통 기반 기술입니다.</p>
+
+<div class="pn"><a href="#quickstart"><span>← 이전</span>퀵 스타트</a><a class="next" href="#layout"><span>다음 →</span>레이아웃과 토픽</a></div>
+</article>
+
+<!-- ═══════════════ 6. 레이아웃과 토픽 ═══════════════ -->
+<article id="layout">
+<div class="eyebrow">핵심 개념</div>
+<h1>레이아웃과 토픽</h1>
+<p class="lede">레이아웃은 서비스 선언, 토픽은 처리 스테이지, 채널은 물리 입출력입니다.
+세 계층의 관계를 이해하면 어떤 업무 흐름이든 조립할 수 있습니다.</p>
+
+<h2>계층 구조</h2>
+<pre><b>레이아웃</b> (예: KOSPI_KOSDAQ)
+ ├─ <b>토픽</b> KS_f          <i>-- KOSPI 체결 수신 스테이지</i>
+ │   ├─ 채널: recv2r { 217,218,219,220,221,256 }
+ │   └─ topics.inbound: [ 액션, 액션, … ]
+ ├─ <b>토픽</b> KS_f_emit     <i>-- KOSPI 체결 송출 스테이지</i>
+ │   └─ topics.inbound: [ 액션, 액션, … ]
+ ├─ <b>토픽</b> KQ_f          <i>-- KOSDAQ 체결 수신 스테이지</i>
+ └─ …</pre>
+
+<h2>토픽 명명 관례</h2>
+<table>
+<tr><th>패턴</th><th>의미</th><th>예시</th></tr>
+<tr><td><code class="i">{시장}_{전문}</code></td><td>수신 스테이지</td><td><code class="i">KS_f</code> (KOSPI fill), <code class="i">KQ_f</code> (KOSDAQ fill)</td></tr>
+<tr><td><code class="i">…_emit</code></td><td>송출 스테이지</td><td><code class="i">KS_f_emit</code></td></tr>
+<tr><td><code class="i">…_qos</code></td><td>유량 제어 스테이지</td><td><code class="i">KS_f_qos</code></td></tr>
+<tr><td><code class="i">…_2nd</code></td><td>후선처리(Secondary) 스테이지</td><td><code class="i">KS_f_2nd</code></td></tr>
+<tr><td><code class="i">{노드}.{토픽}</code></td><td>외부 노드의 토픽 참조</td><td><code class="i">kqp.ksp_f</code> (KQP 노드의 통합시세 토픽)</td></tr>
+</table>
+
+<h2>토픽 간 라우팅</h2>
+<p>토픽에서 다른 토픽으로 메시지를 넘길 때는 <code class="i">route</code> 액션을 사용합니다.
+같은 노드 내부 토픽은 이름으로, 다른 노드의 토픽은 <code class="i">노드.토픽</code> 표기로 참조합니다.</p>
+<pre>act <em>'route'</em>, {to:<em>'KS_f_emit'</em>}          <i>-- 같은 노드 내부</i>
+act <em>'route'</em>, {to:<em>'kqp.ksp_f'</em>, raw:true} <i>-- 외부 노드, 원본(raw) 그대로</i></pre>
+<p><code class="i">raw:true</code>는 가공 없이 수신 원본 전문을 그대로 전달합니다.
+통합시세처럼 원본 보존이 중요한 분기에 사용합니다.</p>
+
+<h2>Primary / Secondary Flow</h2>
+<p>운영에서는 흐름을 두 등급으로 나눠 설계합니다.</p>
+<ul class="doc">
+  <li><strong>Primary Flow</strong> — 메인시세 등 절대 영향을 받아선 안 되는 핵심 경로</li>
+  <li><strong>Secondary Flow</strong> — 통합시세 분기, QoS, 후선처리(2nd) 등 확장·변경이 잦은 경로</li>
+</ul>
+<p>업무 확장에 따른 변경 지점을 Secondary로 격리하면 Primary는 무변경으로 보호됩니다.
+→ <a href="#pattern-2nd">2nd 레이어 격리 패턴</a></p>
+
+<div class="pn"><a href="#vnt"><span>← 이전</span>VNT 런타임 엔진</a><a class="next" href="#actions"><span>다음 →</span>액션 파이프라인</a></div>
+</article>
+
+<!-- ═══════════════ 7. 액션 파이프라인 ═══════════════ -->
+<article id="actions">
+<div class="eyebrow">핵심 개념</div>
+<h1>액션 파이프라인</h1>
+<p class="lede">액션은 PMR 프로그래밍의 최소 단위입니다. 토픽에 들어온 메시지 한 건은
+선언된 액션 목록을 <strong>위에서 아래로 순차 통과</strong>합니다.</p>
+
+<h2>기본 문법</h2>
+<pre>act <em>'액션이름'</em>, { 옵션테이블 }</pre>
+<p>옵션 테이블에는 액션별 고유 파라미터(<code class="i">to</code>, <code class="i">rule</code>,
+<code class="i">offset</code>, <code class="i">filters</code> 등)를 전달합니다.</p>
+
+<h2>파이프라인 예시 해부</h2>
+<pre>inbound: {
+    act <em>'qos'</em>,       {rule:<em>'rule_qos_fill_issue_1'</em>, ms:5}   <i>-- ① 5ms 단위 유량제어</i>
+    act <em>'log'</em>,       {to:<em>'qos'</em>}                            <i>-- ② 증적 기록</i>
+    act <em>'destinate'</em>, {rule:<em>'rule_kskq_qf'</em>}                 <i>-- ③ 목적지 결정 (업무 룰)</i>
+    act <em>'destinate'</em>, {rule:<em>'route_map'</em>}                    <i>-- ④ 목적지 결정 (라우트 맵)</i>
+    act <em>'modify'</em>,    {rule:<em>'wrsec1'</em>}                       <i>-- ⑤ 전문 가공 (헤더 추가)</i>
+    act <em>'emit'</em>, {}                                        <i>-- ⑥ 최종 송출</i>
+}</pre>
+
+<h2>액션의 세 가지 분류</h2>
+<table>
+<tr><th>분류</th><th>액션</th><th>역할</th></tr>
+<tr><td><b>흐름 제어</b></td><td><code class="i">route</code> · <code class="i">proute</code> · <code class="i">filter</code> · <code class="i">destinate</code></td><td>메시지가 어디로 갈지, 계속 갈지 결정</td></tr>
+<tr><td><b>내용 처리</b></td><td><code class="i">modify</code> · <code class="i">process</code></td><td>전문 필드 가공, 재조립, 공유메모리 갱신</td></tr>
+<tr><td><b>출력·기록</b></td><td><code class="i">emit</code> · <code class="i">log</code> · <code class="i">qos</code></td><td>송출, 증적, 유량 제어</td></tr>
+</table>
+<p>개별 액션의 파라미터는 <a href="#act-ref">액션 레퍼런스</a>에서, 콘텐츠 기반 라우팅의 핵심인
+<code class="i">proute</code>는 <a href="#proute">PROUTE 상세</a>에서 다룹니다.</p>
+
+<h2>Programmable Routing (CBR)</h2>
+<p>PMR의 프로그래머블 라우팅은 고급 <strong>콘텐츠 기반 라우팅(Content-Based Routing)</strong>을 지원합니다.
+메시지 페이로드 내의 특정 데이터를 기반으로 정교하고 동적인 경로 제어가 가능하며,
+사용자가 복잡한 라우팅 로직을 직접 완전히 프로그래밍할 수 있습니다.
+정의된 로직은 <strong>재시작 없이 런타임에 즉시 적용</strong>되어, 서비스 중단 없이
+변화하는 트래픽 상황에 실시간으로 대응합니다.</p>
+
+<div class="pn"><a href="#layout"><span>← 이전</span>레이아웃과 토픽</a><a class="next" href="#rules"><span>다음 →</span>룰 (Rules)</a></div>
+</article>
+
+<!-- ═══════════════ 8. 룰 ═══════════════ -->
+<article id="rules">
+<div class="eyebrow">핵심 개념</div>
+<h1>룰 (Rules)</h1>
+<p class="lede">룰은 액션에 주입하는 <strong>이름 있는 로직 단위</strong>입니다.
+액션이 "무엇을 한다"라면 룰은 "어떻게 한다"를 담당하며, 여러 액션·토픽에서 재사용됩니다.</p>
+
+<h2>선언형 룰 참조</h2>
+<pre>act <em>'modify'</em>,    {rule:<em>'wrsec1'</em>}            <i>-- 미리 정의된 가공 룰</i>
+act <em>'destinate'</em>, {rule:<em>'route_map'</em>}         <i>-- 라우트 맵 룰</i>
+act <em>'qos'</em>,       {rule:<em>'rule_qos_fill_issue_1'</em>, ms:5}</pre>
+
+<h2>함수형 룰 작성</h2>
+<p>룰은 Moonscript 함수로 직접 작성할 수 있습니다. <code class="i">fn</code>은 메시지와 옵션을 받아
+경로 지정·가공 등을 수행합니다. 프로그래머블 라우팅 룰 예:</p>
+<pre><i>-- rule: rule_prog_routing</i>
+{
+    desc: <em>'프로그래머블 라우팅, 임의 샘플'</em>
+    fn: (msg, opt) -&gt;
+        if (msg.data\sub 1,1) == <em>'A'</em>
+            <b>SET_ROUTE</b> msg, <em>'KS_f'</em>
+        elseif (msg.data\sub 3,5) == <em>'01S'</em>
+            <b>SET_ROUTE</b> msg, <em>'KS_f_emit'</em>
+        else
+            <i>-- do nothing. ignored</i>
+        true
+}</pre>
+<p class="codecap">rules/rule_prog_routing.moon — 전문 바이트를 검사해 SET_ROUTE로 동적 경로 지정</p>
+
+<h2>룰의 특징</h2>
+<ul class="doc">
+  <li><strong>런타임 교체</strong> — 룰 파일 변경은 핫-리로딩으로 즉시 반영됩니다.</li>
+  <li><strong>JIT 컴파일</strong> — 자주 실행되는 룰은 LuaJIT Trace JIT에 의해 네이티브 코드로 변환됩니다.</li>
+  <li><strong>C 데이터 직접 접근</strong> — 룰 안에서 FFI로 전문 구조체 필드에 바로 접근합니다.</li>
+</ul>
+
+<div class="note"><b>Actions + Rules = 서비스.</b> 파이프라인의 뼈대(액션 순서)는 레이아웃이,
+살(개별 로직)은 룰이 담당합니다. 요구사항 변경의 대부분은 룰 추가·수정만으로 끝납니다.
+실제 공수 사례는 <a href="#estimate">확장 시나리오와 공수</a>를 보세요.</div>
+
+<div class="pn"><a href="#actions"><span>← 이전</span>액션 파이프라인</a><a class="next" href="#boltlog"><span>다음 →</span>Bolt-Log와 리플레이</a></div>
+</article>
+
+<!-- ═══════════════ 9. Bolt-Log ═══════════════ -->
+<article id="boltlog">
+<div class="eyebrow">핵심 개념</div>
+<h1>Bolt-Log와 리플레이</h1>
+<p class="lede"><strong>Bolt-Log</strong>는 PMR의 고성능 Key-Value 파일 DB입니다.
+모든 메시지를 유실 없이 기록하고, 제한 없이 조회하거나, 원하는 구간을 원하는 속도로 재생합니다.</p>
+
+<h2>특징</h2>
+<ul class="doc">
+  <li><strong>랜덤-액세스</strong>와 <strong>2차-인덱스</strong>를 제한 없이 제공</li>
+  <li>시간·일련번호 기반 구간 검색</li>
+  <li><strong>배속 재생</strong>: 0.5× 정밀 분석부터 20× 부하 테스트까지</li>
+  <li>MMF 버퍼 페이징 기반 무손실 기록 (→ <a href="#arch">아키텍처 개요</a>)</li>
+</ul>
+
+<figure class="diag">
+<svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="40" y="80" width="140" height="60" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="110" y="106" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">PMR (운영)</text>
+  <text x="110" y="125" text-anchor="middle" font-size="11" fill="#69788c">실시간 시세 기록</text>
+  <rect x="300" y="70" width="170" height="80" rx="10" fill="#101720"/>
+  <text x="385" y="103" text-anchor="middle" font-size="14" font-weight="bold" fill="#7fd1b9">Bolt-Log</text>
+  <text x="385" y="124" text-anchor="middle" font-size="11" fill="#9fb0c3">Custom KV-DB · 2차 인덱스</text>
+  <rect x="600" y="14" width="160" height="50" rx="8" fill="#eaf5ef" stroke="#177245"/>
+  <text x="680" y="35" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Recovery</text>
+  <text x="680" y="53" text-anchor="middle" font-size="11" fill="#69788c">장애 구간 복구</text>
+  <rect x="600" y="85" width="160" height="50" rx="8" fill="#eef4fb" stroke="#0a4fa8"/>
+  <text x="680" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">Replay</text>
+  <text x="680" y="124" text-anchor="middle" font-size="11" fill="#69788c">0.5× ~ 20× 배속 재생</text>
+  <rect x="600" y="156" width="160" height="50" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="680" y="177" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#c2402a">Tester</text>
+  <text x="680" y="195" text-anchor="middle" font-size="11" fill="#69788c">부하·회귀 테스트</text>
+  <line x1="180" y1="110" x2="298" y2="110" stroke="#3d4a5c" stroke-width="2" marker-end="url(#a4)"/>
+  <line x1="470" y1="92" x2="598" y2="42" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+  <line x1="470" y1="110" x2="598" y2="110" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+  <line x1="470" y1="128" x2="598" y2="178" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+</svg>
+<figcaption>그림 5. Bolt-Log를 축으로 한 Recovery · Replay · Tester 구성</figcaption>
+</figure>
+
+<h2>Full-Fidelity Replay: 단순 기록을 넘어선 '재현'</h2>
+<p>실시간 시세 데이터를 자산화하면 시스템 검증의 완결성이 달라집니다.</p>
+<table>
+<tr><th>시나리오</th><th>배속</th><th>용도</th></tr>
+<tr><td><b>장애 상황 복기</b></td><td>1× / 0.5×</td><td>사고 당시 메시지 흐름을 그대로 재현하여 원인 분석</td></tr>
+<tr><td><b>정밀 분석</b></td><td>0.5×</td><td>이벤트 간 타이밍·순서를 저속으로 관찰</td></tr>
+<tr><td><b>부하 테스트</b></td><td>20×</td><td>실데이터 기반 스트레스 테스트, 신규 구성 검증</td></tr>
+<tr><td><b>마켓 에뮬레이션</b></td><td>자유</td><td>개발·QA 환경에 실장 데이터와 동일한 피드 공급</td></tr>
+</table>
+
+<div class="note"><b>개발 환경이 곧 운영 환경.</b> Bolt-Log 리플레이를 개발 환경의 피드 소스로 쓰면,
+운영과 동일한 데이터로 레이아웃·룰을 검증한 뒤 반영할 수 있습니다.</div>
+
+<p>운영 화면에서의 검색·재생 조작은 <a href="#replay-ops">메시지 검색과 리플레이</a>를 참고하세요.</p>
+
+<div class="pn"><a href="#rules"><span>← 이전</span>룰</a><a class="next" href="#moonscript"><span>다음 →</span>Moonscript 기초</a></div>
+</article>
+
+<!-- ═══════════════ 10. Moonscript ═══════════════ -->
+<article id="moonscript">
+<div class="eyebrow">프로그래밍 가이드</div>
+<h1>Moonscript 기초</h1>
+<p class="lede">PMR의 레이아웃·룰·가공함수는 <strong>Moonscript</strong>로 작성합니다.
+Lua로 컴파일되는 간결한 문법의 언어로, CoffeeScript와 Lua의 중간쯤에 있습니다.</p>
+
+<h2>레퍼런스와 에디터 지원</h2>
+<ul class="doc">
+  <li>공식 문서: <a href="https://moonscript.org/" target="_blank">moonscript.org</a></li>
+  <li>VIM 확장: <a href="https://github.com/leafo/moonscript-vim" target="_blank">leafo/moonscript-vim</a></li>
+  <li>VS Code 확장: Marketplace의 <code class="i">vgalaktionov.moonscript</code></li>
+</ul>
+
+<h2>1. 할당과 연산</h2>
+<pre>hello = <em>"world"</em>
+a, b, c = 1, 2, 3
+hello = 123        <i>-- 위의 hello를 덮어씀</i>
+
+x = 0
+x += 10            <i>-- x = x + 10</i>
+s = <em>"hello "</em>
+s ..= <em>"world"</em>      <i>-- 문자열 연결 후 대입</i>
+b = false
+b and= true or false</pre>
+
+<h2>2. 제어문</h2>
+<pre>have_coins = false
+<b>if</b> have_coins
+  print <em>"Got coins"</em>
+<b>else</b>
+  print <em>"No coins"</em>
+
+<i>-- 한 줄 if 는 then 사용</i>
+<b>if</b> have_coins <b>then</b> <em>"Got coins"</em> <b>else</b> <em>"No coins"</em>
+
+<i>-- unless 는 if 의 반대</i>
+<b>unless</b> os.date(<em>"%A"</em>) == <em>"Monday"</em>
+  print <em>"It is not Monday!"</em>
+
+<i>-- if / unless 는 표현식으로도 사용 가능</i>
+is_tall = (name) -&gt; <b>if</b> name == <em>"Rob"</em> <b>then</b> true <b>else</b> false
+message = <em>"I am #{if is_tall "Rob" then "very tall" else "not so tall"}"</em>
+
+<i>-- 라인 데코레이터: 문장 뒤에 조건 배치</i>
+print(<em>"It IS Monday!"</em>) <b>if</b> is_monday
+print(<em>"It is not Monday.."</em>) <b>unless</b> is_monday</pre>
+
+<h2>3. 루프</h2>
+<pre><b>for</b> i = 1, 10
+  print i
+
+<b>for</b> i = 10, 1, -1 <b>do</b> print i   <i>-- 한 줄 루프는 do 사용</i>
+
+i = 0
+<b>while</b> i &lt; 10
+  <b>continue if</b> i % 2 == 0       <i>-- continue 로 건너뛰기</i>
+  print i
+
+<i>-- 루프를 표현식으로 쓰면 배열 테이블 생성</i>
+my_numbers = <b>for</b> i = 1, 6 <b>do</b> i          <i>-- {1,2,3,4,5,6}</i>
+
+<i>-- 리스트 컴프리헨션</i>
+filter_odds = (t) -&gt;
+  <b>return for</b> x <b>in</b> *t
+    <b>if</b> x % 2 == 0 <b>then</b> x <b>else continue</b>
+evens = filter_odds(my_numbers)          <i>-- {2,4,6}</i></pre>
+
+<h2>4. 스위치</h2>
+<pre>name = <em>"Dan"</em>
+<b>switch</b> name
+  <b>when</b> <em>"Dave"</em>
+    print <em>"You are Dave."</em>
+  <b>when</b> <em>"Dan"</em>
+    print <em>"You are not Dave, but Dan."</em>
+  <b>else</b>
+    print <em>"You are neither Dave nor Dan."</em>
+
+<i>-- 표현식·복수 값 매칭</i>
+b = 4
+next_even = <b>switch</b> b
+  <b>when</b> 1 <b>then</b> 2
+  <b>when</b> 2, 3 <b>then</b> 4
+  <b>when</b> 4, 5 <b>then</b> 6
+  <b>else</b> error <em>"I can't count that high!"</em></pre>
+
+<h2>5. 스코프</h2>
+<pre><i>-- 모든 값은 기본 local. export 로 전역 선언</i>
+<b>export</b> var_1, var_2
+var_1, var_3 = <em>"hello"</em>, <em>"world"</em>   <i>-- var_3 은 local</i>
+
+<i>-- do 블록으로 수동 스코프 생성 (클로저)</i>
+counter = <b>do</b>
+  i = 0
+  -&gt;
+    i += 1
+    <b>return</b> i
+print counter!   <i>-- 1</i>
+print counter!   <i>-- 2</i>
+
+<i>-- local 키워드로 선-선언 / 섀도잉</i>
+<b>local</b> var_4
+<b>if</b> something
+  var_4 = 1
+print var_4      <i>-- if 스코프가 아닌 현재 스코프에 설정되어 동작</i></pre>
+
+<div class="note"><b>레이아웃 파일도 결국 Moonscript 테이블입니다.</b>
+<code class="i">KS_f: recv2r: {…} topics: inbound: {…}</code> 구조는 중첩 테이블 리터럴이며,
+따라서 조건문·루프·함수로 <strong>설정 자체를 생성</strong>할 수도 있습니다.</div>
+
+<div class="pn"><a href="#boltlog"><span>← 이전</span>Bolt-Log와 리플레이</a><a class="next" href="#cdata"><span>다음 →</span>C 데이터 타입 다루기</a></div>
+</article>
+
+<!-- ═══════════════ 11. C 데이터 타입 ═══════════════ -->
+<article id="cdata">
+<div class="eyebrow">프로그래밍 가이드</div>
+<h1>C 데이터 타입 다루기</h1>
+<p class="lede">LuaJIT FFI 덕분에 PMR 스크립트는 C 헤더의 구조체를 <strong>추상화 없이 그대로</strong> 사용합니다.
+시세 전문 같은 고정 레이아웃 바이너리를 제로 오버헤드로 읽고 씁니다.</p>
+
+<h2>다루는 주제</h2>
+<ul class="doc">
+  <li><strong>동적 메모리 할당</strong> (Dynamic Memory-Allocation)</li>
+  <li><strong>타입 캐스팅과 접근</strong> (Type Casting &amp; Access)</li>
+  <li><strong>포인터와 벡터</strong> (Pointer &amp; Vector)</li>
+  <li><strong>[CData] 가비지 컬렉션</strong> — CData 객체의 수명 관리</li>
+</ul>
+
+<h2>C 헤더 로드와 구조체 생성</h2>
+<p><code class="i">C_HEADER</code>로 C 헤더 파일을 로드하면 선언된 구조체 타입을 스크립트에서 바로 사용할 수 있습니다.
+<code class="i">C_NEW</code>는 지정 타입의 인스턴스를 동적 할당합니다.</p>
+<pre><b>C_HEADER</b> <em>'t_sample.h'</em>       <i>-- C 헤더 로드: 구조체 _AA0 선언 포함</i>
+
+o1 = <b>C_NEW</b> <em>'_AA0'</em>            <i>-- _AA0 구조체 동적 할당</i>
+o1.a = 100                   <i>-- 필드 직접 접근 (오프셋 계산·직렬화 불필요)</i>
+o1.b = 110
+o1.c = -10
+
+print o1.a, o1.b, o1.c</pre>
+<p class="codecap">C 구조체 필드에 네이티브로 읽기/쓰기 — Node.js처럼 Buffer 파싱 계층을 거치지 않음</p>
+
+<h2>왜 중요한가</h2>
+<table>
+<tr><th>작업</th><th>일반 스크립트 런타임</th><th>PMR (LuaJIT FFI)</th></tr>
+<tr><td>전문 필드 읽기</td><td>Buffer slice → 파싱 → 객체 변환</td><td><b>구조체 필드 직접 접근</b></td></tr>
+<tr><td>C 라이브러리 호출</td><td>바인딩 래퍼 (N-API 등) 필요</td><td><b>FFI 선언만으로 Zero-Overhead 호출</b></td></tr>
+<tr><td>메모리 사용</td><td>객체 복사·GC 압박</td><td><b>CData 인플레이스, 경량 GC</b></td></tr>
+</table>
+
+<div class="warn"><b>CData 수명 주의.</b> C_NEW로 할당한 CData는 LuaJIT GC의 관리를 받습니다.
+포인터를 C 측에 장기 보관하는 경우 스크립트 쪽 참조가 사라지면 회수될 수 있으므로,
+수명이 긴 버퍼는 참조를 유지하거나 네이티브 슬롯에 앵커링하세요.</div>
+
+<div class="pn"><a href="#moonscript"><span>← 이전</span>Moonscript 기초</a><a class="next" href="#spec"><span>다음 →</span>전문 정의와 식별자</a></div>
+</article>
+
+<!-- ═══════════════ 12. 전문 정의와 식별자 ═══════════════ -->
+<article id="spec">
+<div class="eyebrow">프로그래밍 가이드</div>
+<h1>전문 정의와 식별자</h1>
+<p class="lede">수신 파이프라인의 첫 관문은 "이 전문이 무엇인지"를 아는 것입니다.
+<strong>전문 정의(Specifications)</strong>가 구조를 선언하고, <strong>식별자(Identifiers)</strong>가 판별합니다.</p>
+
+<h2>식별자 (Identifiers)</h2>
+<p>수신 바이트 스트림에서 전문 종류를 판별하는 규칙입니다. 통상 전문 선두의 TR 코드
+(예: <code class="i">A301S</code> = KOSPI 체결, <code class="i">A301Q</code> = KOSDAQ 체결)를 사용합니다.
+식별 위치는 <code class="i">identify: {offset, length}</code> 형식으로 지정합니다.</p>
+<pre>identify: {1, 5}                    <i>-- 1번째 바이트부터 5바이트</i>
+identify: {offset:1, length:5}      <i>-- 위와 완전히 동일</i></pre>
+
+<h2>전문 정의 (Specifications)</h2>
+<p>식별된 전문의 필드 구조(레이아웃)를 선언합니다. 시장·전문 유형별로 하나의 <code class="i">.moon</code>
+파일로 관리하며, 신규 시장 추가는 대부분 spec 파일 추가로 끝납니다.</p>
+<pre>specs/
+ ├─ dst_fill_kospi.moon              <i>-- KOSPI 체결 전문</i>
+ ├─ dst_fill_kosdaq.moon             <i>-- KOSDAQ 체결 전문</i>
+ ├─ dst_event_info_kospi.moon
+ ├─ dst_event_nextday_kospi.moon
+ ├─ dst_event_nextday_kosdaq.moon
+ ├─ dst_i6a2s_elw_event.moon         <i>-- ELW</i>
+ ├─ dst_i6a3s_etf_event.moon         <i>-- ETF</i>
+ ├─ dst_i6a4s_etn_event.moon         <i>-- ETN</i>
+ ├─ dst_i6a5s_lc_event.moon
+ └─ dst_i8a3s_etf_shortsell_info.moon</pre>
+<p class="codecap">전문 정의 파일 구성 예 — 파일명이 곧 전문의 정체성</p>
+
+<h2>정의되지 않은 전문 (Not Defined)</h2>
+<p>어떤 식별자에도 매칭되지 않은 Raw 메시지는 유실되지 않고 별도로 기록됩니다.
+<a href="#control">PMR Control</a>의 증적로그 화면에서 <strong>Not Defined 조회</strong>로 확인하고,
+신규 전문이면 spec을 추가해 즉시 대응합니다.</p>
+
+<div class="note"><b>신규 시장 추가 절차 = 설정 3종.</b> ① 송수신 채널 추가(<code class="i">dict_channels</code>)
+② 전문 정의(spec) 추가 ③ 식별자(identify)·가공(process) 추가. NXT ETF 시장 추가가 이 절차로
+단 수일에 완료된 사례는 <a href="#estimate">확장 시나리오와 공수</a>에 있습니다.</div>
+
+<div class="pn"><a href="#cdata"><span>← 이전</span>C 데이터 타입</a><a class="next" href="#procdist"><span>다음 →</span>가공·분배 함수</a></div>
+</article>
+
+<!-- ═══════════════ 13. 가공·분배 함수 ═══════════════ -->
+<article id="procdist">
+<div class="eyebrow">프로그래밍 가이드</div>
+<h1>가공·분배 함수</h1>
+<p class="lede">파이프라인 중단의 <strong>가공함수(Process)</strong>와 후단의 <strong>분배함수(Distribute)</strong>는
+업무 로직이 실제로 사는 곳입니다. 모두 Moonscript 파일 단위로 관리·핫리로드됩니다.</p>
+
+<h2>가공함수 (Process)</h2>
+<p>수신 전문을 변환·집계하거나 새 전문을 생성합니다. 파일 접두어로 성격을 구분합니다.</p>
+<table>
+<tr><th>접두어</th><th>성격</th><th>파일 예시</th></tr>
+<tr><td><code class="i">lfn_</code></td><td>수신 전문 처리 (per-message)</td><td><code class="i">lfn_krx_fill.moon</code>, <code class="i">lfn_krx_master.moon</code>, <code class="i">lfn_krx_mkop.moon</code>, <code class="i">lfn_event.moon</code>, <code class="i">lfn_close.moon</code></td></tr>
+<tr><td><code class="i">lfn_bypass_</code></td><td>바이패스(원본 유지) 처리</td><td><code class="i">lfn_bypass_issue_investor.moon</code>, <code class="i">lfn_bypass_issue_stat.moon</code></td></tr>
+<tr><td><code class="i">gen_</code></td><td>파생 전문 생성 (집계·산출)</td><td><code class="i">gen_vi.moon</code>(VI), <code class="i">gen_sum01.moon</code>, <code class="i">gen_sector_investor.moon</code>, <code class="i">gen_single_remain_quote.moon</code>, <code class="i">gen_st_stock_quote.moon</code></td></tr>
+</table>
+
+<h2>공유메모리(SHM) 갱신과 process 액션</h2>
+<p>종목별 현재가·호가 등 상태는 <strong>종목 공유메모리(SHM)</strong>에 유지됩니다.
+<code class="i">process</code> 액션이 가공 룰과 함께 SHM을 갱신하며, 후속 가공·분배는 이 상태를 참조합니다.</p>
+<pre>inbound: {
+    act <em>'filter'</em>,  {offset:1,  length:2, filters:{<em>'A3'</em>}}
+    act <em>'filter'</em>,  {offset:14, length:2, filters:{<em>'G1'</em>}}
+    act <em>'modify'</em>,  {rule:<em>'diff_a3_only'</em>}    <i>-- 직전가 대비 변동분만</i>
+    act <em>'process'</em>, {}                       <i>-- SHM 업데이트 & 가공</i>
+    act <em>'emit'</em>
+}</pre>
+<p class="codecap">사용자 액션 예 — 필터 2단 → 변동분 가공 → 공유메모리 갱신 → 송출</p>
+<p>SHM의 이상 여부(통합/가공 이상, 메모리 이상)는 <a href="#control">PMR Control</a>의
+종목 메모리 조회 화면에서 실시간 확인합니다.</p>
+
+<h2>분배함수 (Distribute)</h2>
+<p>어떤 목적지에 어떤 방식으로 내보낼지를 결정합니다. <code class="i">destinate</code> 액션의 룰로 주입되며,
+정적 라우트 맵과 업무 조건 룰을 겹쳐 쓸 수 있습니다.</p>
+<pre>act <em>'destinate'</em>, {rule:<em>'rule_kskq_qf'</em>}   <i>-- 업무 조건 (예: 시장·보드별)</i>
+act <em>'destinate'</em>, {rule:<em>'route_map'</em>}      <i>-- 정적 목적지 맵</i></pre>
+
+<div class="note"><b>전문 재조립 패턴.</b> "기간계가 필요로 하는 필드만 재조립해 새 전문으로 송신"과 같은
+요구는 ① 송출용 전문 정의(spec) 작성 → ② 재조립 가공함수 작성 → ③ destinate/emit 연결로 해결합니다.
+실사례 기준 공수: 채널 추가 1일 + 전문 정의·재조립 스크립트 3일.</div>
+
+<div class="pn"><a href="#spec"><span>← 이전</span>전문 정의와 식별자</a><a class="next" href="#act-ref"><span>다음 →</span>액션 목록</a></div>
+</article>
+
+<!-- ═══════════════ 14. 액션 목록 ═══════════════ -->
+<article id="act-ref">
+<div class="eyebrow">액션 레퍼런스</div>
+<h1>액션 목록</h1>
+<p class="lede">토픽 파이프라인에서 사용하는 표준 액션의 파라미터 레퍼런스입니다.</p>
+
+<table>
+<tr><th>액션</th><th>주요 파라미터</th><th>설명</th></tr>
+<tr><td><code class="i">log</code></td><td><code class="i">to</code></td><td>지정 증적 채널(<code class="i">rcv0</code>, <code class="i">qos</code> 등)에 메시지를 기록. Bolt-Log 기반 무손실.</td></tr>
+<tr><td><code class="i">route</code></td><td><code class="i">to</code>, <code class="i">raw</code></td><td>다른 토픽으로 전달. <code class="i">to:'노드.토픽'</code>으로 외부 노드 참조, <code class="i">raw:true</code>는 원본 그대로.</td></tr>
+<tr><td><code class="i">proute</code></td><td><code class="i">identify</code>, <code class="i">routes</code>, <code class="i">hash</code>, <code class="i">rule</code></td><td><b>P</b>rogrammable <b>ROUTE</b>. 페이로드 내용 기반 동적 라우팅. → <a href="#proute">상세</a></td></tr>
+<tr><td><code class="i">filter</code></td><td><code class="i">offset</code>, <code class="i">length</code>, <code class="i">filters</code></td><td>지정 위치 바이트가 필터 목록과 일치하는 메시지만 통과.</td></tr>
+<tr><td><code class="i">modify</code></td><td><code class="i">rule</code></td><td>전문 가공(헤더 추가, 필드 변환, 가격단위 정규화, 변동분 산출 등)을 룰로 수행.</td></tr>
+<tr><td><code class="i">destinate</code></td><td><code class="i">rule</code></td><td>송출 목적지 결정. 복수 선언 시 룰을 순차 적용(업무 룰 → 라우트 맵).</td></tr>
+<tr><td><code class="i">qos</code></td><td><code class="i">rule</code>, <code class="i">ms</code></td><td>유량 제어. <code class="i">ms</code> 간격 기준으로 룰(예: <code class="i">rule_qos_fill_issue_1</code>)에 따라 병합·간축.</td></tr>
+<tr><td><code class="i">process</code></td><td><code class="i">rule</code></td><td>공유메모리(SHM) 갱신을 동반한 가공 처리.</td></tr>
+<tr><td><code class="i">emit</code></td><td>—</td><td>destinate로 결정된 목적지에 최종 송출. 파이프라인의 마지막 액션.</td></tr>
+</table>
+
+<h2>filter 사용 예</h2>
+<pre>action 목록:
+
+    act <em>'filter'</em>, {
+        offset:  1
+        length:  2
+        filters: { <em>'A3'</em> }        <i>-- TR 그룹 A3만 통과</i>
+    }
+
+    act <em>'filter'</em>, {
+        offset:  14
+        length:  2
+        filters: { <em>'G1'</em> }        <i>-- 보드 G1만 통과</i>
+    }
+
+    act <em>'modify'</em>, { rule: <em>'diff_a3_only'</em> }
+    act <em>'emit'</em></pre>
+<p class="codecap">custom01 노드 — 체결 전문 중 특정 보드만 걸러 변동분을 가공 송출</p>
+
+<div class="note"><b>필터는 겹쳐 쓸수록 좁아집니다.</b> filter를 연속 선언하면 AND 조건이 됩니다.
+"A3 전문 중 G1 보드"처럼 복합 조건을 액션 두 줄로 표현합니다.</div>
+
+<div class="pn"><a href="#procdist"><span>← 이전</span>가공·분배 함수</a><a class="next" href="#proute"><span>다음 →</span>PROUTE 상세</a></div>
+</article>
+
+<!-- ═══════════════ 15. PROUTE ═══════════════ -->
+<article id="proute">
+<div class="eyebrow">액션 레퍼런스</div>
+<h1>PROUTE 상세</h1>
+<p class="lede"><strong>PROUTE(Programmable ROUTE)</strong>는 PMR 콘텐츠 기반 라우팅(CBR)의 핵심 액션입니다.
+메시지 내용을 식별해 목적지를 동적으로 결정하며, 4가지 모드를 제공합니다.</p>
+
+<h2>모드 1 — 다이나믹 라우팅 (routes 맵)</h2>
+<p>전문 선두 5바이트(TR 코드)를 식별키로 삼아 목적지를 맵으로 지정합니다.</p>
+<pre>act <em>'proute'</em>, {
+    identify: {1, 5}
+    routes:
+        A301S: {to:<em>'KS_f'</em>}          <i>-- KOSPI 체결 → KS_f</i>
+        A301Q: {to:<em>'KQ_f'</em>}          <i>-- KOSDAQ 체결 → KQ_f</i>
+        A302S: {ignore: true}       <i>-- 무시</i>
+        A302Q: {ignore: true}
+        else:  {to:<em>'kskq_etc'</em>}      <i>-- 그 외 전부</i>
+}</pre>
+
+<h3>필터로 응용</h3>
+<p><code class="i">else</code>를 <code class="i">ignore</code>로 두면 화이트리스트 필터가 됩니다.</p>
+<pre>act <em>'proute'</em>, {
+    identify: {1, 5}
+    routes:
+        A301S: {to:<em>'KS_f'</em>}
+        A301Q: {to:<em>'KQ_f'</em>}
+        else:  {ignore: true}       <i>-- 지정 전문 외 모두 차단</i>
+}</pre>
+
+<h3>identify 표기 동치</h3>
+<pre>identify: {1, 5}
+identify: {offset:1, length:5}      <i>-- 둘은 동일하다</i></pre>
+
+<h2>모드 2 — 해시 분산 라우팅</h2>
+<p>식별 구간(주로 종목코드)을 해싱해 목적지 개수로 mod 분산합니다. 파티셔닝·수평 분산에 사용합니다.</p>
+<pre>act <em>'proute'</em>, {
+    identify: {1, 5}
+    hash:     {method:<em>'gstrhash'</em>}   <i>-- mod by #routes</i>
+    routes: {
+        {to:<em>'KS_f1'</em>}
+        {to:<em>'KS_f2'</em>}
+        {to:<em>'KS_f3'</em>}
+        {to:<em>'KS_f4'</em>}
+    }
+}</pre>
+<p class="codecap">종목코드에 대해 해싱하는 경우에 주로 사용 — Kafka의 key 기반 파티셔닝에 대응</p>
+
+<h2>모드 3 — 프로그래머블 라우팅 (rule 함수)</h2>
+<p>라우팅 규칙 전체를 함수로 작성합니다. 임의 조건·복수 필드 조합이 가능합니다.</p>
+<pre>act <em>'proute'</em>, { rule: <em>'rule_prog_routing'</em> }
+
+<i>-- rule: rule_prog_routing</i>
+{
+    desc: <em>'프로그래머블 라우팅, 임의 샘플'</em>
+    fn: (msg, opt) -&gt;
+        if (msg.data\sub 1,1) == <em>'A'</em>
+            <b>SET_ROUTE</b> msg, <em>'KS_f'</em>
+        elseif (msg.data\sub 3,5) == <em>'01S'</em>
+            <b>SET_ROUTE</b> msg, <em>'KS_f_emit'</em>
+        else
+            <i>-- do nothing. ignored</i>
+        true
+}</pre>
+
+<h2>모드 4 — 혼합 (routes 값에 rule 지정)</h2>
+<p>맵 라우팅과 함수 라우팅을 키별로 섞을 수 있습니다.</p>
+<pre>act <em>'proute'</em>, {
+    identify: {1, 5}
+    routes:
+        A301S: {to:<em>'KS_f'</em>}              <i>-- 정적 라우팅</i>
+        A301Q: {rule:<em>'custom_kq_f'</em>}     <i>-- 이 키만 별도 함수 적용</i>
+        A302S: {ignore: true}
+        A302Q: {ignore: true}
+        else:  {to:<em>'kskq_etc'</em>}
+}</pre>
+
+<h2>모드 선택 가이드</h2>
+<table>
+<tr><th>상황</th><th>권장 모드</th></tr>
+<tr><td>TR 코드별 고정 분기</td><td>모드 1 (routes 맵)</td></tr>
+<tr><td>화이트리스트 필터링</td><td>모드 1 + <code class="i">else: ignore</code></td></tr>
+<tr><td>종목코드 기준 수평 분산</td><td>모드 2 (hash)</td></tr>
+<tr><td>복수 필드·임의 조건 분기</td><td>모드 3 (rule 함수)</td></tr>
+<tr><td>대부분 고정 + 일부 특수 처리</td><td>모드 4 (혼합)</td></tr>
+</table>
+
+<div class="pn"><a href="#act-ref"><span>← 이전</span>액션 목록</a><a class="next" href="#hotreload"><span>다음 →</span>무중단 배포</a></div>
+</article>
+
+<!-- ═══════════════ 16. 무중단 배포 ═══════════════ -->
+<article id="hotreload">
+<div class="eyebrow">운영</div>
+<h1>무중단 배포 (Hot-Reload)</h1>
+<p class="lede">PMR의 변경 적용은 <strong>Stop-and-Go가 아니라 Hot-Reloading</strong>입니다.
+레이아웃·룰·스크립트 변경이 메모리 상에서 즉시 반영되며, 세션은 유지됩니다.</p>
+
+<h2>레거시 대비 배포 흐름</h2>
+<figure class="diag">
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <text x="20" y="34" font-size="13" font-weight="bold" fill="#c2402a">C 레거시 (Stop-and-Go)</text>
+  <rect x="20" y="48" width="130" height="40" rx="6" fill="#fdf3ec" stroke="#c2402a"/><text x="85" y="73" text-anchor="middle" font-size="12" fill="#8c5040">소스 수정·컴파일</text>
+  <rect x="200" y="48" width="130" height="40" rx="6" fill="#fdf3ec" stroke="#c2402a"/><text x="265" y="73" text-anchor="middle" font-size="12" fill="#8c5040">프로세스 종료</text>
+  <rect x="380" y="48" width="130" height="40" rx="6" fill="#fdf3ec" stroke="#c2402a"/><text x="445" y="73" text-anchor="middle" font-size="12" fill="#8c5040">바이너리 교체</text>
+  <rect x="560" y="48" width="130" height="40" rx="6" fill="#fdf3ec" stroke="#c2402a"/><text x="625" y="73" text-anchor="middle" font-size="12" fill="#8c5040">재시작·세션 재연결</text>
+  <line x1="150" y1="68" x2="198" y2="68" stroke="#3d4a5c" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="330" y1="68" x2="378" y2="68" stroke="#3d4a5c" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="510" y1="68" x2="558" y2="68" stroke="#3d4a5c" stroke-width="1.5" marker-end="url(#a5)"/>
+  <text x="740" y="73" font-size="11" fill="#c2402a">중단 발생</text>
+  <text x="20" y="136" font-size="13" font-weight="bold" fill="#177245">PMR (Hot-Reloading)</text>
+  <rect x="20" y="150" width="160" height="40" rx="6" fill="#eaf5ef" stroke="#177245"/><text x="100" y="175" text-anchor="middle" font-size="12" fill="#0e4d2f">스크립트·설정 수정</text>
+  <rect x="230" y="150" width="160" height="40" rx="6" fill="#eaf5ef" stroke="#177245"/><text x="310" y="175" text-anchor="middle" font-size="12" fill="#0e4d2f">Preview 검증 (선택)</text>
+  <rect x="440" y="150" width="160" height="40" rx="6" fill="#eaf5ef" stroke="#177245"/><text x="520" y="175" text-anchor="middle" font-size="12" fill="#0e4d2f">메모리 상 즉시 반영</text>
+  <line x1="180" y1="170" x2="228" y2="170" stroke="#3d4a5c" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="390" y1="170" x2="438" y2="170" stroke="#3d4a5c" stroke-width="1.5" marker-end="url(#a5)"/>
+  <text x="650" y="175" font-size="11" fill="#177245">Zero-Downtime · 세션 유지</text>
+</svg>
+<figcaption>그림 6. 배포 절차 비교 — 코딩·컴파일·재시작 단계 자체가 사라짐</figcaption>
+</figure>
+
+<h2>운영 원칙</h2>
+<ul class="doc">
+  <li><strong>Intra-day 대응</strong> — 장중에도 실시간 변경이 가능하므로 새벽·장후 작업에 묶이지 않습니다.</li>
+  <li><strong>초 단위 롤백</strong> — 배포 실패 시 설정을 이전 상태로 복구하는 것만으로 롤백이 완료됩니다.</li>
+  <li><strong>Preview 선행</strong> — 변경 전 <a href="#control">PMR Control</a>의 메시지 흐름 미리보기로 영향 범위를 확인합니다.</li>
+  <li><strong>Secondary 우선 적용</strong> — 리스크 있는 변경은 <a href="#pattern-2nd">2nd 레이어</a>에 먼저 적용해 Primary를 보호합니다.</li>
+</ul>
+
+<div class="pn"><a href="#proute"><span>← 이전</span>PROUTE 상세</a><a class="next" href="#control"><span>다음 →</span>PMR Control 관제</a></div>
+</article>
+
+<!-- ═══════════════ 17. PMR Control ═══════════════ -->
+<article id="control">
+<div class="eyebrow">운영</div>
+<h1>PMR Control 관제</h1>
+<p class="lede"><strong>Kuanta Control</strong>은 다수의 PMR 노드를 한 화면에서 관제하는 시스템입니다.
+각 노드는 <strong>RESTful API를 기본 제공</strong>하며, Control은 이 API 기반으로 동작합니다.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="300" y="20" width="200" height="56" rx="9" fill="#101720"/>
+  <text x="400" y="44" text-anchor="middle" font-size="14" font-weight="bold" fill="#7fd1b9">CONTROL 관제</text>
+  <text x="400" y="63" text-anchor="middle" font-size="11" fill="#9fb0c3">대시보드 · 시각화 · 조회</text>
+  <g font-size="12" fill="#141d29">
+  <rect x="30" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="80" y="152" text-anchor="middle">서버 1</text>
+  <rect x="155" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="205" y="152" text-anchor="middle">서버 2</text>
+  <rect x="280" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="330" y="152" text-anchor="middle">서버 3</text>
+  <rect x="405" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="455" y="152" text-anchor="middle">서버 4</text>
+  <rect x="530" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="580" y="152" text-anchor="middle">서버 5</text>
+  <rect x="655" y="126" width="100" height="44" rx="6" fill="#fff" stroke="#cdd5de"/><text x="705" y="152" text-anchor="middle">서버 6 …</text>
+  </g>
+  <line x1="340" y1="78" x2="90" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <line x1="365" y1="78" x2="212" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <line x1="395" y1="78" x2="333" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <line x1="415" y1="78" x2="452" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <line x1="440" y1="78" x2="575" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <line x1="465" y1="78" x2="698" y2="124" stroke="#0a4fa8" stroke-width="1.4" marker-end="url(#a6)"/>
+  <text x="510" y="105" font-size="11" fill="#0a4fa8">RESTful API</text>
+</svg>
+<figcaption>그림 7. 각 PMR 노드의 RESTful API를 통한 멀티 서버 관제</figcaption>
+</figure>
+
+<h2>주요 화면과 기능</h2>
+<h3>1. 대시보드 &amp; 설정 항목 조회</h3>
+<ul class="doc">
+  <li>노드별 자원 현황 — CPU, Memory, Traffic 등 실시간 모니터링</li>
+  <li>각 설정 항목별 리스트 및 개별 조회</li>
+</ul>
+
+<h3>2. 메시지 흐름 시각화</h3>
+<ul class="doc">
+  <li>각 채널별 메시지 흐름 제어와 구성 조회</li>
+  <li>메시지 가공/라우팅 시각화</li>
+  <li><strong>설정 변경 시 메시지 흐름 미리보기(Preview)</strong> — 반영 전에 결과 흐름을 시각적으로 검증</li>
+  <li>각 프로세스별 액션 항목 조회</li>
+</ul>
+
+<h3>3. 종목 메모리 조회</h3>
+<ul class="doc">
+  <li>종목별 공유메모리(SHM) 조회</li>
+  <li>통합/가공 이상 여부 또는 메모리 이상 여부 조회</li>
+</ul>
+
+<h3>4. 증적로그 메시지 조회 (전문 조회)</h3>
+<ul class="doc">
+  <li>수신·송출 등 각 증적로그 파일의 로그 검색 및 조회</li>
+  <li>검색 조건을 스크립트로 설정</li>
+  <li>시간·일련번호 기준 조회</li>
+  <li>정의되지 않은 Raw 메시지 조회 (Not Defined)</li>
+</ul>
+
+<div class="note"><b>API-first.</b> Control의 모든 기능은 노드의 RESTful API 위에 구현되어 있으므로,
+동일 API로 사내 관제·자동화 도구를 직접 연동할 수 있습니다.</div>
+
+<div class="pn"><a href="#hotreload"><span>← 이전</span>무중단 배포</a><a class="next" href="#watchlist"><span>다음 →</span>Watch List 모니터링</a></div>
+</article>
+
+<!-- ═══════════════ 18. Watch List ═══════════════ -->
+<article id="watchlist">
+<div class="eyebrow">운영</div>
+<h1>Watch List 모니터링</h1>
+<p class="lede"><strong>Watch List</strong>는 화이트박스형 감시 모니터링입니다.
+"무엇을 감시할지"를 블랙박스 지표가 아니라 <strong>사용자가 스크립트로 직접 정의</strong>합니다.</p>
+
+<h2>기능</h2>
+<ul class="doc">
+  <li>감시 아이템과 이슈를 <strong>샌드박스형으로 관리</strong> — 등록 / 편집 / 삭제</li>
+  <li>감시 타입: <strong>Realtime</strong>(실시간 감시) / <strong>Interval</strong>(주기적 감시)</li>
+  <li><strong>런타임 스크립트 주입·변경</strong> — 운영 중 감시 로직을 즉시 추가·수정</li>
+  <li>정의되지 않은 Raw 메시지(Not Defined) 감시</li>
+</ul>
+
+<h2>활용 예</h2>
+<table>
+<tr><th>감시 아이템</th><th>타입</th><th>내용</th></tr>
+<tr><td>특정 종목 체결 지연</td><td>Realtime</td><td>체결 전문 수신 간격이 임계치를 넘으면 이슈 발생</td></tr>
+<tr><td>채널별 수신 건수</td><td>Interval</td><td>주기적으로 채널 트래픽을 집계해 급감·급증 탐지</td></tr>
+<tr><td>Not Defined 전문 출현</td><td>Realtime</td><td>미정의 전문 수신 즉시 알림 → spec 추가 대응</td></tr>
+<tr><td>SHM 이상 여부</td><td>Interval</td><td>종목 공유메모리의 통합/가공 정합성 점검</td></tr>
+</table>
+
+<div class="note"><b>감시도 프로그래머블.</b> 장애 대응 중 "이 조건도 봐야겠다" 싶으면
+그 자리에서 감시 스크립트를 주입합니다. 라우팅과 동일한 핫-리로딩 철학이 관제에도 적용됩니다.</div>
+
+<div class="pn"><a href="#control"><span>← 이전</span>PMR Control</a><a class="next" href="#replay-ops"><span>다음 →</span>메시지 검색과 리플레이</a></div>
+</article>
+
+<!-- ═══════════════ 19. 메시지 검색과 리플레이 ═══════════════ -->
+<article id="replay-ops">
+<div class="eyebrow">운영</div>
+<h1>메시지 검색과 리플레이</h1>
+<p class="lede">Bolt-Log에 기록된 전 메시지는 <strong>검색 → 조회 → 재생(Replay)</strong>의 3단 조작으로 활용합니다.</p>
+
+<h2>워크플로</h2>
+<ol class="doc">
+  <li><strong>검색</strong> — 시간 구간·일련번호·검색 조건 스크립트로 대상 메시지 집합을 특정합니다.</li>
+  <li><strong>조회</strong> — 개별 전문을 필드 단위로 열람합니다(증적로그 전문 조회와 동일 화면).</li>
+  <li><strong>재생 / Replay</strong> — 특정 구간을 지정 배속(0.5×~20×)으로 재생해 하위 시스템에 재공급합니다.</li>
+</ol>
+
+<h2>대표 시나리오</h2>
+<table>
+<tr><th>시나리오</th><th>절차</th></tr>
+<tr><td><b>장애 복기</b></td><td>사고 시각 전후 구간 검색 → 1×/0.5× 재생 → 당시 라우팅·가공 결과 재현</td></tr>
+<tr><td><b>신규 레이아웃 검증</b></td><td>전일 실데이터 구간 재생 → 신규 레이아웃 통과 결과를 Preview·증적으로 비교</td></tr>
+<tr><td><b>부하 테스트</b></td><td>피크 구간을 20× 재생 → 하위 시스템 처리 한계 측정</td></tr>
+<tr><td><b>수신 누락 복구 (Recovery)</b></td><td>누락 일련번호 구간 검색 → 해당 구간만 재송출</td></tr>
+</table>
+
+<div class="pn"><a href="#watchlist"><span>← 이전</span>Watch List</a><a class="next" href="#case-uni"><span>다음 →</span>통합시세 시스템 구성</a></div>
+</article>
+
+<!-- ═══════════════ 20. 통합시세 구성 ═══════════════ -->
+<article id="case-uni">
+<div class="eyebrow">적용 사례 &amp; 패턴</div>
+<h1>통합시세 시스템 구성</h1>
+<p class="lede">증권사 시세 FEP·통합시세에 PMR을 적용한 실제 구성입니다.
+수신부터 리테일·투자정보·Prop·관제까지 하나의 프로그래머블 파이프라인으로 통합됩니다.</p>
+
+<h2>전체 구성 (WRSEC 사례)</h2>
+<figure class="diag">
+<svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="14" y="120" width="96" height="60" rx="7" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="62" y="146" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#c2402a">KRX/NXT</text>
+  <text x="62" y="164" text-anchor="middle" font-size="11" fill="#8c5040">시세 수신</text>
+  <rect x="150" y="110" width="120" height="80" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="210" y="140" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">시세 FEP</text>
+  <text x="210" y="160" text-anchor="middle" font-size="11" fill="#69788c">PMR</text>
+  <rect x="330" y="60" width="140" height="70" rx="8" fill="#fff" stroke="#0a4fa8" stroke-width="1.6"/>
+  <text x="400" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">통합시세</text>
+  <text x="400" y="107" text-anchor="middle" font-size="11" fill="#69788c">KQP · PMR</text>
+  <rect x="330" y="170" width="140" height="70" rx="8" fill="#fff" stroke="#8a6d1f" stroke-width="1.6"/>
+  <text x="400" y="196" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#8a6d1f">2nd 가공/라우팅</text>
+  <text x="400" y="215" text-anchor="middle" font-size="11" fill="#69788c">Bypass · Modified</text>
+  <g font-size="11.5" fill="#141d29">
+  <rect x="560" y="10"  width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="34" text-anchor="middle">원장</text>
+  <rect x="560" y="56"  width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="80" text-anchor="middle">Retail 접속서버</text>
+  <rect x="560" y="102" width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="126" text-anchor="middle">Retail 투자정보</text>
+  <rect x="560" y="148" width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="172" text-anchor="middle">AI 뉴스</text>
+  <rect x="560" y="194" width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="218" text-anchor="middle">Prop.1</text>
+  <rect x="560" y="240" width="118" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/><text x="619" y="264" text-anchor="middle">Prop.2</text>
+  </g>
+  <rect x="732" y="120" width="130" height="60" rx="8" fill="#101720"/>
+  <text x="797" y="146" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#7fd1b9">Kuanta 관제</text>
+  <text x="797" y="164" text-anchor="middle" font-size="10.5" fill="#9fb0c3">CONTROL</text>
+  <line x1="110" y1="150" x2="148" y2="150" stroke="#c2402a" stroke-width="2.2" marker-end="url(#a7)"/>
+  <line x1="270" y1="132" x2="328" y2="102" stroke="#0a4fa8" stroke-width="2" marker-end="url(#a7)"/>
+  <line x1="270" y1="168" x2="328" y2="198" stroke="#8a6d1f" stroke-width="2" marker-end="url(#a7)"/>
+  <line x1="470" y1="80" x2="558" y2="34" stroke="#0a4fa8" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="470" y1="90" x2="558" y2="76" stroke="#0a4fa8" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="470" y1="100" x2="558" y2="120" stroke="#0a4fa8" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="470" y1="192" x2="558" y2="168" stroke="#8a6d1f" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="470" y1="208" x2="558" y2="212" stroke="#8a6d1f" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="470" y1="222" x2="558" y2="258" stroke="#8a6d1f" stroke-width="1.5" marker-end="url(#a7)"/>
+  <line x1="680" y1="150" x2="730" y2="150" stroke="#3d4a5c" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#a7)"/>
+</svg>
+<figcaption>그림 8. WRSEC 구성 사례 — 시세 FEP 뒤에 통합시세와 2nd 가공/라우팅 레이어를 병렬 배치</figcaption>
+</figure>
+
+<h2>통합시세 노드 내부</h2>
+<p>통합시세 노드는 <a href="#arch">아키텍처 개요</a>의 3단 파이프라인을 그대로 따릅니다:
+수신 → 식별/가공 → 분배, 전 구간 Audit Logger, MMF 버퍼 페이징(4M 바이트 프레임 I/O) 로깅.</p>
+<p>프로그래머블 요소는 4종으로 분리 관리됩니다:</p>
+<ul class="doc">
+  <li><strong>식별자</strong> — <code class="i">dst_fill_kospi.moon</code> 등 (→ <a href="#spec">전문 정의와 식별자</a>)</li>
+  <li><strong>전문 정의</strong> — 시장·전문별 spec 파일</li>
+  <li><strong>가공함수</strong> — <code class="i">lfn_krx_fill.moon</code>, <code class="i">gen_vi.moon</code> 등 (→ <a href="#procdist">가공·분배 함수</a>)</li>
+  <li><strong>분배함수</strong> — <code class="i">route_map</code> 등 destinate 룰</li>
+</ul>
+
+<h2>Bypass와 Modified의 공존</h2>
+<p>2nd 레이어는 하위 시스템별 요구에 따라 <strong>Bypass</strong>(원본 그대로)와
+<strong>Modified</strong>(가공 전문)를 동시에 서비스합니다. 동일 수신 스트림에서
+<code class="i">route raw:true</code> 분기와 <code class="i">modify</code> 파이프라인을 병렬 구성하면 됩니다.</p>
+
+<div class="pn"><a href="#replay-ops"><span>← 이전</span>메시지 검색과 리플레이</a><a class="next" href="#pattern-2nd"><span>다음 →</span>2nd 레이어 격리 패턴</a></div>
+</article>
+
+<!-- ═══════════════ 21. 2nd 레이어 패턴 ═══════════════ -->
+<article id="pattern-2nd">
+<div class="eyebrow">적용 사례 &amp; 패턴</div>
+<h1>2nd 레이어 격리 패턴</h1>
+<p class="lede">업무 확장에 따른 변경 리스크를 <strong>후선처리(2nd) 흐름으로 제한·격리</strong>하여
+메인시세 흐름에 영향을 주지 않는 표준 확장 패턴입니다.</p>
+
+<h2>패턴 구성 — KOSPI 체결 확장 사례</h2>
+<figure class="diag">
+<svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs>
+    <marker id="b1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c2402a"/></marker>
+    <marker id="b2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0a4fa8"/></marker>
+    <marker id="b3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#177245"/></marker>
+    <marker id="b4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a6d1f"/></marker>
+  </defs>
+  <rect x="20" y="40" width="840" height="110" rx="10" fill="#fdf6f4" stroke="#e6c4bb" stroke-dasharray="6 4"/>
+  <text x="40" y="64" font-size="12" font-weight="bold" fill="#c2402a">PRIMARY FLOW — 무변경 보호 구간</text>
+  <rect x="60" y="80" width="130" height="54" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="125" y="102" text-anchor="middle" font-size="11" fill="#69788c">PMR</text><text x="125" y="120" text-anchor="middle" font-size="13" font-weight="bold">KS_f</text>
+  <rect x="330" y="80" width="130" height="54" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text x="395" y="102" text-anchor="middle" font-size="11" fill="#69788c">PMR</text><text x="395" y="120" text-anchor="middle" font-size="13" font-weight="bold">KS_f_emit</text>
+  <rect x="640" y="80" width="180" height="54" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="730" y="112" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#c2402a">UDP 메인시세 송출</text>
+  <line x1="190" y1="107" x2="328" y2="107" stroke="#c2402a" stroke-width="2.4" marker-end="url(#b1)"/>
+  <line x1="460" y1="107" x2="638" y2="107" stroke="#c2402a" stroke-width="2.4" marker-end="url(#b1)"/>
+  <rect x="20" y="168" width="840" height="120" rx="10" fill="#f4f8fc" stroke="#bcd0e6" stroke-dasharray="6 4"/>
+  <text x="40" y="192" font-size="12" font-weight="bold" fill="#0a4fa8">SECONDARY FLOW — 확장에 따른 변경 지점</text>
+  <g font-size="12">
+  <rect x="60" y="210" width="120" height="54" rx="8" fill="#fff" stroke="#0a4fa8"/>
+  <text x="120" y="230" text-anchor="middle" fill="#69788c" font-size="10.5">KQP</text><text x="120" y="248" text-anchor="middle" font-weight="bold" fill="#0a4fa8">ksp_f</text>
+  <rect x="230" y="210" width="120" height="54" rx="8" fill="#fff" stroke="#8a6d1f"/>
+  <text x="290" y="230" text-anchor="middle" fill="#69788c" font-size="10.5">PMR</text><text x="290" y="248" text-anchor="middle" font-weight="bold" fill="#8a6d1f">KS_f_qos</text>
+  <rect x="400" y="210" width="120" height="54" rx="8" fill="#fff" stroke="#177245"/>
+  <text x="460" y="230" text-anchor="middle" fill="#69788c" font-size="10.5">PMR</text><text x="460" y="248" text-anchor="middle" font-weight="bold" fill="#177245">KS_f_2nd</text>
+  <rect x="570" y="210" width="120" height="54" rx="8" fill="#fff" stroke="#177245"/>
+  <text x="630" y="230" text-anchor="middle" fill="#69788c" font-size="10.5">BROKER</text><text x="630" y="248" text-anchor="middle" font-weight="bold" fill="#177245">KS_f</text>
+  <rect x="740" y="210" width="110" height="54" rx="8" fill="#eaf5ef" stroke="#177245" stroke-dasharray="5 3"/>
+  <text x="795" y="235" text-anchor="middle" font-size="11" fill="#69788c">PMR</text><text x="795" y="252" text-anchor="middle" font-weight="bold" fill="#177245" font-size="12">custom01</text>
+  </g>
+  <line x1="125" y1="134" x2="122" y2="208" stroke="#0a4fa8" stroke-width="1.8" marker-end="url(#b2)"/>
+  <text x="150" y="176" font-size="10.5" fill="#0a4fa8">통합시세 분기</text>
+  <line x1="180" y1="237" x2="228" y2="237" stroke="#8a6d1f" stroke-width="1.8" marker-end="url(#b4)"/>
+  <line x1="350" y1="237" x2="398" y2="237" stroke="#177245" stroke-width="1.8" marker-end="url(#b3)"/>
+  <line x1="520" y1="237" x2="568" y2="237" stroke="#177245" stroke-width="1.8" marker-end="url(#b3)"/>
+  <text x="544" y="228" text-anchor="middle" font-size="10.5" fill="#177245">TCP 송출</text>
+  <line x1="690" y1="237" x2="738" y2="237" stroke="#177245" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#b3)"/>
+  <text x="714" y="228" text-anchor="middle" font-size="10.5" fill="#177245">신규 업무</text>
+</svg>
+<figcaption>그림 9. Primary/Secondary 이중 흐름 — 신규 업무(custom01)는 2nd 체인 끝에만 추가</figcaption>
+</figure>
+<div class="legend">
+  <span><i style="border-color:#c2402a"></i>UDP 메인시세</span>
+  <span><i style="border-color:#0a4fa8"></i>UDP 통합시세</span>
+  <span><i style="border-color:#8a6d1f"></i>UDP 유량제어</span>
+  <span><i style="border-color:#177245"></i>TCP 송출 / 신규 업무</span>
+</div>
+
+<h2>패턴의 원칙</h2>
+<ul class="doc">
+  <li>후선처리(2nd)용 PMR을 <strong>추가로 구성</strong>합니다 — 기존 노드를 고치지 않습니다.</li>
+  <li>업무 확장에 따른 주요 변경 리스크를 <strong>2nd 흐름으로 제한·격리</strong>합니다.</li>
+  <li><strong>"메인시세 흐름에 영향을 주지 않는다"</strong>가 최우선 규칙입니다.</li>
+  <li>레이아웃(서비스) 구성을 직접 변경·적용하면서 <strong>업무를 숙달</strong>합니다 — 낮은 리스크 구간이 곧 학습 구간.</li>
+  <li>TCP 송출 등 신규 프로토콜도 2nd 체인에서 먼저 적용합니다.</li>
+</ul>
+
+<h2>신규 업무 추가 예 — custom01 노드</h2>
+<p>"체결 전문 중 특정 보드만, 가격 변동분이 있을 때만 기간계로 송출"이라는 요구는
+2nd 체인 뒤에 custom01 노드를 붙여 해결합니다.</p>
+<pre><i>-- custom01 노드 파이프라인</i>
+inbound: {
+    act <em>'filter'</em>, {offset:1,  length:2, filters:{<em>'A3'</em>}}   <i>-- 체결 전문만</i>
+    act <em>'filter'</em>, {offset:14, length:2, filters:{<em>'G1'</em>}}   <i>-- 대상 보드만</i>
+    act <em>'modify'</em>, {rule:<em>'diff_a3_only'</em>}                   <i>-- 변동분만 통과·가공</i>
+    act <em>'emit'</em>
+}</pre>
+
+<div class="pn"><a href="#case-uni"><span>← 이전</span>통합시세 시스템 구성</a><a class="next" href="#pattern-ha"><span>다음 →</span>정보원 이중화</a></div>
+</article>
+
+<!-- ═══════════════ 22. 정보원 이중화 ═══════════════ -->
+<article id="pattern-ha">
+<div class="eyebrow">적용 사례 &amp; 패턴</div>
+<h1>정보원 이중화</h1>
+<p class="lede">서로 다른 벤더의 피드를 Primary/Secondary로 받아 <strong>표준 스펙(Standard SPEC)으로
+정규화</strong>한 뒤 단일 흐름으로 합치는 고가용성 패턴입니다.</p>
+
+<h2>구성 — 해외 정보원 이중화 사례</h2>
+<figure class="diag">
+<svg viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="a8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect x="30" y="40" width="140" height="56" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text x="100" y="63" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2402a">연합인포맥스 GTS</text>
+  <text x="100" y="82" text-anchor="middle" font-size="11" fill="#8c5040">Primary (메인)</text>
+  <rect x="30" y="150" width="140" height="56" rx="8" fill="#f4f8fc" stroke="#0a4fa8"/>
+  <text x="100" y="173" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Revoluos</text>
+  <text x="100" y="192" text-anchor="middle" font-size="11" fill="#3f5a78">Secondary (백업)</text>
+  <rect x="270" y="40" width="120" height="56" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.5"/>
+  <text x="330" y="73" text-anchor="middle" font-size="13" font-weight="bold">PMR</text>
+  <rect x="270" y="150" width="120" height="56" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.5"/>
+  <text x="330" y="183" text-anchor="middle" font-size="13" font-weight="bold">PMR</text>
+  <rect x="480" y="92" width="150" height="62" rx="8" fill="#eef4fb" stroke="#0a4fa8" stroke-width="1.6"/>
+  <text x="555" y="117" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Standard SPEC.</text>
+  <text x="555" y="137" text-anchor="middle" font-size="11" fill="#69788c">정규화 · 병합 PMR</text>
+  <rect x="690" y="97" width="110" height="52" rx="8" fill="#eaf5ef" stroke="#177245"/>
+  <text x="745" y="128" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">하위 시스템</text>
+  <line x1="170" y1="68" x2="268" y2="68" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="170" y1="178" x2="268" y2="178" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="390" y1="76" x2="478" y2="112" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+  <line x1="390" y1="170" x2="478" y2="136" stroke="#3d4a5c" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#a8)"/>
+  <line x1="630" y1="123" x2="688" y2="123" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a8)"/>
+</svg>
+<figcaption>그림 10. 벤더 이중화 — 벤더별 수신 PMR이 표준 스펙으로 정규화 후 병합</figcaption>
+</figure>
+
+<h2>구현 포인트</h2>
+<ul class="doc">
+  <li><strong>벤더별 수신 노드 분리</strong> — 벤더 프로토콜(TCP 콜백 등)과 전문 차이를 각 수신 노드가 흡수합니다.</li>
+  <li><strong>Standard SPEC 정규화</strong> — <code class="i">modify</code> 룰로 가격단위·필드를 내부 표준으로 변환합니다.
+    (예: 해외파생 시세 가격단위를 내부 기준으로 정규화하는 modify 룰 — 실사례 공수 1일)</li>
+  <li><strong>Primary 우선 / Secondary 대기</strong> — 백업 흐름은 평시 대기하다 절체 시 동일 스펙으로 즉시 승계합니다.</li>
+</ul>
+
+<div class="note"><b>벤더 추가 = 수신 노드 추가.</b> 하위 시스템은 표준 스펙만 알면 되므로,
+신규 정보원(MD-X 등) 추가가 하위 시스템 변경 없이 끝납니다. 실사례 공수:
+TCP 프로토콜 콜백 + 송수신 채널 설정 추가 1주.</div>
+
+<div class="pn"><a href="#pattern-2nd"><span>← 이전</span>2nd 레이어 격리 패턴</a><a class="next" href="#estimate"><span>다음 →</span>확장 시나리오와 공수</a></div>
+</article>
+
+<!-- ═══════════════ 23. 확장 시나리오와 공수 ═══════════════ -->
+<article id="estimate">
+<div class="eyebrow">적용 사례 &amp; 패턴</div>
+<h1>확장 시나리오와 공수</h1>
+<p class="lede">실제 제안·운영에서 접수된 요구사항과 PMR 기준 대응 공수입니다.
+"어떤 변경이 어떤 설정 작업으로 환원되는가"를 보여주는 실측 데이터입니다.</p>
+
+<h2>실측 공수 사례 (2026.01 제안 기준)</h2>
+<table>
+<tr><th>요구사항</th><th>대응 작업</th><th>공수</th></tr>
+<tr><td><b>기간계 가격 변동분 시세송신</b><br>체결가가 직전 체결가·기준가 대비 변동 시에만 송신</td>
+    <td>송수신 채널 추가 + 송출용 전문 정의·재조립 스크립트 작성</td><td>채널 1일 + 스크립트 3일<br>(<b>총 1주</b>)</td></tr>
+<tr><td><b>KRX 거래시간 확대 대응</b> (26.6.29)</td>
+    <td>시세FEP: 변경 없음 / 통합시세: 양 거래소 간 보드ID·세션ID별 호가병합 설정 변경</td><td><b>1일</b></td></tr>
+<tr><td><b>NXT ETF 시장 추가</b> (26.9.14)</td>
+    <td>시세FEP: 송수신 채널 설정 추가(<code class="i">dict_channels</code>) / 통합시세: 전문 설정 추가(spec·identify·process)</td><td>채널 <b>1일</b> + 전문 설정</td></tr>
+<tr><td><b>해외파생 시장·신규 정보원(MD-X) 추가</b></td>
+    <td>시세FEP: TCP 프로토콜 콜백 + 송수신 채널 설정 추가 / 지연시세: 설정 추가</td><td><b>1주</b> + 1일</td></tr>
+<tr><td><b>해외파생 가격단위 내부 기준 정규화</b></td>
+    <td>시세FEP: <code class="i">modify</code> 액션 룰 추가</td><td><b>1일</b></td></tr>
+<tr><td><b>해외 정보원 2중화</b> (GTS ↔ Revoluos)</td>
+    <td>벤더별 수신 노드 + Standard SPEC 정규화 (→ <a href="#pattern-ha">정보원 이중화</a>)</td><td>구성 패턴 적용</td></tr>
+</table>
+
+<h2>공수 산정 기준</h2>
+<ul class="doc">
+  <li><strong>신규 시장 추가: 1 M/M</strong> — 채널·spec·identify·process 설정 일체</li>
+  <li><strong>단순 변경: 0.1 M/M</strong> — 룰 추가·설정값 변경 수준</li>
+  <li>레거시 대비 시장 추가 대응 시간: <strong>수주(Weeks) → 수일(Days)</strong></li>
+</ul>
+
+<h2>TCO 곡선</h2>
+<figure class="diag">
+<svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <line x1="60" y1="200" x2="690" y2="200" stroke="#3d4a5c" stroke-width="1.4"/>
+  <line x1="60" y1="200" x2="60" y2="24" stroke="#3d4a5c" stroke-width="1.4"/>
+  <text x="30" y="110" font-size="11" fill="#69788c" transform="rotate(-90 30 110)">연간 비용</text>
+  <g font-size="10.5" fill="#69788c" text-anchor="middle">
+    <text x="115" y="220">초기 구축</text><text x="115" y="233">(CAPEX)</text>
+    <text x="220" y="220">1년차</text><text x="325" y="220">2년차</text>
+    <text x="430" y="220">3년차</text><text x="535" y="220">4년차</text><text x="640" y="220">5년차</text>
+  </g>
+  <g fill="#c2402a" opacity="0.75">
+    <rect x="90"  y="120" width="24" height="80"/><rect x="195" y="90" width="24" height="110"/>
+    <rect x="300" y="84" width="24" height="116"/><rect x="405" y="76" width="24" height="124"/>
+    <rect x="510" y="68" width="24" height="132"/><rect x="615" y="60" width="24" height="140"/>
+  </g>
+  <g fill="#0a4fa8" opacity="0.85">
+    <rect x="122" y="80"  width="24" height="120"/><rect x="227" y="160" width="24" height="40"/>
+    <rect x="332" y="178" width="24" height="22"/><rect x="437" y="188" width="24" height="12"/>
+    <rect x="542" y="190" width="24" height="10"/><rect x="647" y="192" width="24" height="8"/>
+  </g>
+  <line x1="300" y1="38" x2="300" y2="200" stroke="#177245" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="308" y="46" font-size="11" fill="#177245" font-weight="bold">24개월 내 BEP</text>
+  <g font-size="11.5">
+    <rect x="470" y="26" width="14" height="14" fill="#c2402a" opacity="0.75"/><text x="490" y="38" fill="#3d4a5c">Legacy (운영비 누증)</text>
+    <rect x="470" y="48" width="14" height="14" fill="#0a4fa8" opacity="0.85"/><text x="490" y="60" fill="#3d4a5c">PMR — 운영비 제로 수렴</text>
+  </g>
+</svg>
+<figcaption>그림 11. 레거시는 연차마다 운영비(OPEX)가 누증, PMR은 초기 구축 후 운영비가 제로에 수렴</figcaption>
+</figure>
+<p>24개월 내 투자비를 전액 회수하고, 이후 유지보수 공수(M/M)의 90% 이상을 절감합니다.</p>
+
+<div class="pn"><a href="#pattern-ha"><span>← 이전</span>정보원 이중화</a><a class="next" href="#compare"><span>다음 →</span>PMR vs 범용 메시지 브로커</a></div>
+</article>
+
+<!-- ═══════════════ 24. 비교 ═══════════════ -->
+<article id="compare">
+<div class="eyebrow">부록</div>
+<h1>PMR vs 범용 메시지 브로커</h1>
+<p class="lede">Kafka·RabbitMQ 같은 범용 브로커와 PMR은 겹치는 것 같지만 푸는 문제가 다릅니다.
+PMR의 현실적 비교군은 초저지연 미션-크리티컬 미들웨어인 <strong>Solace</strong> 계열입니다.</p>
+
+<h2>포지셔닝</h2>
+<table>
+<tr><th>제품</th><th>성격</th><th>주 무대</th></tr>
+<tr><td><b>Kafka (Confluent)</b></td><td>분산 이벤트 스트리밍 플랫폼 — 대용량 저장·재처리 중심</td><td>데이터 파이프라인, 클라우드 인프라 전반</td></tr>
+<tr><td><b>RabbitMQ (Broadcom)</b></td><td>범용 메시지 큐 미들웨어</td><td>애플리케이션 간 비동기 통신</td></tr>
+<tr><td><b>Solace</b></td><td>초저지연(Low-Latency)·고신뢰 메시지 미들웨어</td><td>증권·은행 등 미션-크리티컬 금융, 제조/물류</td></tr>
+<tr><td><b>PMR</b></td><td><b>프로그래머블 메시지 라우터</b> — 초저지연 + 인라인 가공/라우팅 프로그래밍</td><td>시세 FEP·통합시세·대외계 등 금융 메시지 인프라</td></tr>
+</table>
+
+<h2>관점별 비교</h2>
+<table>
+<tr><th>관점</th><th>Kafka</th><th>PMR</th></tr>
+<tr><td><b>기본 단위</b></td><td>저장되는 이벤트 로그(토픽·파티션)</td><td>액션 파이프라인이 실행되는 처리 스테이지(토픽)</td></tr>
+<tr><td><b>가공 처리</b></td><td>별도 계층 필요 (Kafka Streams, Flink, ksqlDB)</td><td>라우터 내부 인라인 액션·룰 (modify·process)</td></tr>
+<tr><td><b>클라이언트</b></td><td>Producer/Consumer 라이브러리 연동</td><td>UDP/TCP 채널 설정 — 레거시 C 시스템과 직결</td></tr>
+<tr><td><b>로직 변경</b></td><td>애플리케이션 재배포</td><td>스크립트·설정 핫-리로딩 (무중단)</td></tr>
+<tr><td><b>런타임 footprint</b></td><td>JVM 클러스터</td><td>단일 실행 파일, 런타임 1MB 이하·메모리 10MB 이하</td></tr>
+<tr><td><b>재생(Replay)</b></td><td>오프셋 기반 재소비</td><td>Bolt-Log 2차 인덱스 검색 + 0.5×~20× 배속 재생</td></tr>
+<tr><td><b>바이너리 전문</b></td><td>직렬화 계층(Avro/Protobuf 등) 권장</td><td>C 구조체 그대로 FFI 직접 접근</td></tr>
+</table>
+
+<div class="note"><b>공존 관계.</b> 실제 구성에서 PMR은 하위의 Message Broker(그림 9의 BROKER 노드)와
+함께 배치되기도 합니다. 초저지연 수신·가공·분배는 PMR이, 범용 팬아웃·보관은 브로커가 맡는 분업입니다.</div>
+
+<div class="pn"><a href="#estimate"><span>← 이전</span>확장 시나리오와 공수</a><a class="next" href="#faq"><span>다음 →</span>FAQ</a></div>
+</article>
+
+<!-- ═══════════════ 25. FAQ ═══════════════ -->
+<article id="faq">
+<div class="eyebrow">부록</div>
+<h1>FAQ</h1>
+
+<h3>Q. 정말 코딩 없이 운영이 되나요?</h3>
+<p>파이프라인 구성·경로 변경·필터링은 설정만으로 끝납니다. 새 가공 로직이 필요하면 Moonscript 룰을 작성하지만,
+컴파일·배포·재시작 절차가 없어 이 역시 "코딩-컴파일 사이클"이 아닙니다. 이것이 제로-코드 유지보수의 의미입니다.</p>
+
+<h3>Q. 스크립트인데 성능이 나옵니까?</h3>
+<p>LuaJIT Trace JIT가 핫패스를 네이티브 코드로 변환하며, FFI로 C 구조체에 제로 오버헤드로 접근합니다.
+런타임 1MB 이하·메모리 10MB 이하의 풋프린트로 C/C++ 네트워크 애플리케이션 대체를 목표로 설계되었습니다.
+→ <a href="#vnt">VNT 런타임 엔진</a></p>
+
+<h3>Q. 장중에 설정을 바꾸는 게 위험하지 않나요?</h3>
+<p>세 겹의 안전장치가 있습니다: ① 변경 전 <strong>Preview</strong>로 흐름 검증
+② <strong>2nd 레이어 격리 패턴</strong>으로 Primary 보호 ③ 설정 복구만으로 <strong>초 단위 롤백</strong>.
+→ <a href="#hotreload">무중단 배포</a>, <a href="#pattern-2nd">2nd 레이어 격리 패턴</a></p>
+
+<h3>Q. 신규 시장(거래소) 추가는 어떤 절차인가요?</h3>
+<p>① 송수신 채널 추가(<code class="i">dict_channels</code>) ② 전문 정의(spec) 추가 ③ 식별자·가공함수 추가.
+NXT ETF 시장 추가 실사례에서 채널 설정은 1일이었습니다. → <a href="#estimate">확장 시나리오와 공수</a></p>
+
+<h3>Q. 메시지 유실 시 복구는요?</h3>
+<p>모든 메시지는 MMF 버퍼 페이징으로 Bolt-Log에 무손실 기록됩니다. 누락 구간을 일련번호로 검색해
+해당 구간만 재송출(Recovery)하거나, 임의 배속으로 재생(Replay)합니다.
+→ <a href="#boltlog">Bolt-Log와 리플레이</a></p>
+
+<h3>Q. Kafka를 이미 쓰고 있는데 PMR이 왜 필요한가요?</h3>
+<p>역할이 다릅니다. 시세 수신·전문 가공·초저지연 분배 구간은 PMR이, 대용량 보관·범용 팬아웃은 브로커가
+맡는 공존 구성이 일반적입니다. → <a href="#compare">PMR vs 범용 메시지 브로커</a></p>
+
+<h3>Q. 개발자는 무엇을 배우면 되나요?</h3>
+<p>학습 경로: ① <a href="#quickstart">퀵 스타트</a>로 레이아웃 구조 파악 →
+② <a href="#moonscript">Moonscript 기초</a> → ③ <a href="#act-ref">액션 레퍼런스</a>와
+<a href="#proute">PROUTE</a> → ④ <a href="#cdata">C 데이터 타입</a>(전문 가공 시).
+실무에서는 2nd 레이어에서 레이아웃을 직접 변경·적용하며 숙달하는 것을 권장합니다.</p>
+
+<div class="pn"><a href="#compare"><span>← 이전</span>PMR vs 범용 메시지 브로커</a><span></span></div>
+</article>
+
+</main>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('nav.side a');
+  var pages = document.querySelectorAll('main article');
+  var side = document.getElementById('side');
+
+  function show(id){
+    var h = id || (location.hash ? location.hash.replace('#','') : '') || 'intro';
+    var found = false;
+    pages.forEach(function(p){
+      var on = (p.id === h);
+      p.classList.toggle('show', on);
+      if(on) found = true;
+    });
+    if(!found){ document.getElementById('intro').classList.add('show'); h='intro'; }
+    links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#'+h); });
+    window.scrollTo(0,0);
+    side.classList.remove('open');
+  }
+
+  // 클릭 기반 라우팅: 해시 변경이 차단된 환경(샌드박스 미리보기 등)에서도 동작
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if(!a) return;
+    e.preventDefault();
+    var id = a.getAttribute('href').slice(1);
+    try { history.replaceState(null, '', '#' + id); } catch(err) {}
+    show(id);
+  });
+
+  window.addEventListener('hashchange', function(){ show(); });
+  document.getElementById('menuBtn').addEventListener('click', function(){ side.classList.toggle('open'); });
+  show();
+})();
+</script>
+</body>
+</html>
