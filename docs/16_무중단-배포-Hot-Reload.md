@@ -31,5 +31,5 @@ PMR의 변경 적용은 **Stop-and-Go가 아니라 Hot-Reloading**입니다. 레
 
 - **Intra-day 대응** — 장중에도 실시간 변경이 가능하므로 새벽·장후 작업에 묶이지 않습니다.
 - **초 단위 롤백** — 배포 실패 시 설정을 이전 상태로 복구하는 것만으로 롤백이 완료됩니다.
-- **Preview 선행** — 변경 전 [PMR Control](control.md)의 메시지 흐름 미리보기로 영향 범위를 확인합니다.
-- **Secondary 우선 적용** — 리스크 있는 변경은 [2nd 레이어](pattern-2nd.md)에 먼저 적용해 Primary를 보호합니다.
+- **Preview 선행** — 변경 전 [PMR Control](17_PMR-Control-관제.md)의 메시지 흐름 미리보기로 영향 범위를 확인합니다.
+- **Secondary 우선 적용** — 리스크 있는 변경은 [2nd 레이어](21_2nd-레이어-격리-패턴.md)에 먼저 적용해 Primary를 보호합니다.

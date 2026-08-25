@@ -34,4 +34,4 @@
 
 *\* 출처: Koscom, 대신증권, 우리투자증권*
 
-KRX/NXT 시세 수신부터 SOR·MMF·Prop Trading·정보계·BP 분배, TCP 대외 송출, Node.js/Java 하위 시스템 연동까지 전 구간을 PMR 노드들의 조합으로 구성합니다. 실제 구성 사례는 [통합시세 시스템 구성](case-integrated.md)을 참고하세요.
+KRX/NXT 시세 수신부터 SOR·MMF·Prop Trading·정보계·BP 분배, TCP 대외 송출, Node.js/Java 하위 시스템 연동까지 전 구간을 PMR 노드들의 조합으로 구성합니다. 실제 구성 사례는 [통합시세 시스템 구성](20_통합시세-시스템-구성.md)을 참고하세요.
