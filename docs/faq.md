@@ -27,3 +27,7 @@ LuaJIT Trace JIT가 핫패스를 네이티브 코드로 변환하며, FFI로 C �
 ### Q. 개발자는 무엇을 배우면 되나요?
 
 학습 경로: ① [퀵 스타트](quickstart.md)로 레이아웃 구조 파악 → ② [Moonscript 기초](moonscript.md) → ③ [액션 레퍼런스](actions-reference.md)와 [PROUTE](proute.md) → ④ [C 데이터 타입](cdata.md)(전문 가공 시). 실무에서는 2nd 레이어에서 레이아웃을 직접 변경·적용하며 숙달하는 것을 권장합니다.
+
+### Q. 테스트 질문 입니다.
+
+연필 수정 테스트 중입니다.
