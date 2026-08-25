@@ -13,6 +13,25 @@
   --md-primary-fg-color--dark: #5f7482;
 }
 
+/* 헤더 로고 — 크기 키움 + 모서리 둥글게(사각 모서리의 파란색 노출 방지) + 텍스트와 간격 */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 6px;
+  display: block;      /* inline 여백 제거 + 수직 정렬 */
+}
+.md-header__button.md-logo {
+  margin-right: 0.1rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;   /* 로고 수직 중앙 */
+}
+/* 로고 옆 사이트 제목의 좌측 여백도 축소 */
+.md-header__title {
+  margin-left: 0;
+}
+
 /* h1: 브랜드 컬러 + 하단 라인 */
 .md-typeset h1 {
   font-weight: 800;
@@ -24,7 +43,7 @@
 
 /* h2: 좌측 강조 바 */
 .md-typeset h2 {
-  border-left: 5px solid #0349c5;
+  border-left: 5px solid #4285f4;
   padding-left: 0.5em;
 }
 
@@ -43,7 +62,7 @@
   box-shadow: 0 1px 3px rgba(20, 29, 41, 0.08);
 }
 .md-typeset table:not([class]) th {
-  background: #2a1c55;
+  background: #0349c5;
   color: #ffffff;
   font-weight: 700;
 }
@@ -157,18 +176,34 @@
   display: none;
 }
 
-/* 사이드바 영역 구분 — 배경색 + 오른쪽 구분선 (데스크톱) */
+/* 사이드바 배경 — Figma: 둥근 #F4F4F8 카드(모서리 12px, 상하 패딩), 높이 채움 (데스크톱) */
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
-    background: #f4f4f8;
-    border-right: 1px solid var(--md-default-fg-color--lightest);
+    background: transparent;
+    border: none;
   }
+  /* 배경 카드는 실제 높이가 있는 스크롤 영역에 적용 */
   .md-sidebar--primary .md-sidebar__scrollwrap {
     background: #f4f4f8;
+    border-radius: 12px;
+    padding: 0 0 0.6rem;           /* 상단 패딩은 sticky 제목이 담당 */
   }
-  [data-md-color-scheme="slate"] .md-sidebar--primary,
   [data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap {
     background: #1a1e28;
+  }
+  /* 사이드바 사이트 제목 — sticky + 불투명 배경으로 스크롤 내용이 위로 비치는 것 방지.
+     Material 기본 흰색 box-shadow(브라이트 halo)를 카드색과 동일하게 바꿔 제거 */
+  .md-sidebar--primary .md-nav__title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f4f4f8;
+    box-shadow: 0 0 8px 8px #f4f4f8;
+    padding-top: 0.6rem;
+  }
+  [data-md-color-scheme="slate"] .md-sidebar--primary .md-nav__title {
+    background: #1a1e28;
+    box-shadow: 0 0 8px 8px #1a1e28;
   }
 }
 
