@@ -27,6 +27,24 @@
   color: #f0b866;
 }
 
+/* 표 디자인: 둥근 모서리 + 브랜드 헤더 + 행 hover (Claude Code 디자인 편집 데모) */
+.md-typeset table:not([class]) {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(20, 29, 41, 0.08);
+}
+.md-typeset table:not([class]) th {
+  background: #0a4fa8;
+  color: #ffffff;
+  font-weight: 700;
+}
+.md-typeset table:not([class]) tr:hover td {
+  background: #eef4fb;
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tr:hover td {
+  background: #23324a;
+}
+
 /* 도식(figure) 컨테이너 */
 .md-typeset figure {
   border: 1px solid var(--md-default-fg-color--lightest);
