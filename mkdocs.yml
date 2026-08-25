@@ -5,6 +5,8 @@ site_url: https://billy-crew.github.io/pmr-docs/
 theme:
   name: material
   language: ko
+  custom_dir: overrides
+  logo: assets/logo.svg
   font:
     text: Noto Sans KR
     code: JetBrains Mono
@@ -14,14 +16,14 @@ theme:
       primary: indigo
       accent: indigo
       toggle:
-        icon: material/weather-night
+        icon: custom/moon
         name: 다크 모드로
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: indigo
       toggle:
-        icon: material/weather-sunny
+        icon: fontawesome/regular/sun
         name: 라이트 모드로
   features:
     - navigation.instant
@@ -35,6 +37,7 @@ theme:
     - content.code.copy
 
 extra_css:
+  - https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans@latest/css/SpoqaHanSansNeo.css
   - stylesheets/extra.css
 
 nav:
