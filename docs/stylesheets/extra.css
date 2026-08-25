@@ -139,12 +139,12 @@
   color: var(--md-default-fg-color);
 }
 
-/* hover */
-.md-nav--primary .md-nav__link:hover {
+/* hover (선택된 항목은 제외 — 흰 pill 유지) */
+.md-nav--primary .md-nav__link:not(.md-nav__link--active):hover {
   background: rgba(3, 73, 197, 0.07);
   color: #0349c5;
 }
-[data-md-color-scheme="slate"] .md-nav--primary .md-nav__link:hover {
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__link:not(.md-nav__link--active):hover {
   background: rgba(122, 165, 224, 0.15);
   color: #a9c6ef;
 }
