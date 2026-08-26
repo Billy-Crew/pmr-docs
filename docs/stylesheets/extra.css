@@ -12,6 +12,15 @@
   --md-primary-fg-color--light: #90a3ad;
   --md-primary-fg-color--dark: #5f7482;
 }
+/* 다크 모드(slate) — 상단 헤더바를 어두운 색으로 (라이트 shadow-green이 그대로 남는 문제 수정) */
+[data-md-color-scheme="slate"][data-md-color-primary="indigo"] {
+  --md-primary-fg-color: #1f2430;
+  --md-primary-fg-color--light: #2a3040;
+  --md-primary-fg-color--dark: #161a23;
+  /* 헤더 위 텍스트·아이콘은 밝게 유지 */
+  --md-primary-bg-color: rgba(255, 255, 255, 0.95);
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+}
 
 /* 헤더 로고 — 크기 키움 + 모서리 둥글게(사각 모서리의 파란색 노출 방지) + 텍스트와 간격 */
 .md-header__button.md-logo img,
@@ -40,11 +49,20 @@
   border-bottom: 3px solid #2a1c55;
   padding-bottom: 0.3em;
 }
+/* 다크 모드 — 어두운 보라(#2a1c55)가 배경에 묻히지 않게 밝은 라벤더로 */
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  color: #a2c4c9;
+  border-bottom-color: #a2c4c9;
+}
 
 /* h2: 좌측 강조 바 */
 .md-typeset h2 {
   border-left: 5px solid #4285f4;
   padding-left: 0.5em;
+}
+/* 다크 모드 — h2 강조 바가 어두운 배경에 묻히지 않게 밝은 그레이로 */
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  border-left-color: #cccccc;
 }
 
 /* 인라인 코드 색상 */
@@ -65,6 +83,10 @@
   background: #0349c5;
   color: #ffffff;
   font-weight: 700;
+}
+/* 다크 모드 — 표 헤더(컬럼) 배경을 딥 퍼플로 */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background: #595959;
 }
 .md-typeset table:not([class]) tr:hover td {
   background: #eef4fb;
@@ -247,10 +269,18 @@
   height: 1.7rem;
   padding: 0;
   margin: 0.35rem 0;
-  display: inline-grid;
-  place-items: center;
+  position: relative;   /* 내부 SVG 절대 중앙정렬 기준 */
   background-color: rgba(244, 244, 248, 0.13);
   border-radius: 50%;
+}
+/* 아이콘 중앙 고정 — Material 기본 `.md-option:checked+label{display:block}`이
+   우리 place-items:center를 덮어써 아이콘이 위로 뜨고 달/해 baseline 차이로 토글 시
+   위치가 튀던 문제 수정. SVG를 버튼 정중앙에 절대 고정해 스킴 무관하게 정렬 유지 */
+[data-md-component="palette"] .md-header__button svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 [data-md-component="palette"] .md-header__button:hover {
   background-color: rgba(244, 244, 248, 0.24);

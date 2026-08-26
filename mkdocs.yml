@@ -23,7 +23,7 @@ theme:
       primary: indigo
       accent: indigo
       toggle:
-        icon: fontawesome/regular/sun
+        icon: custom/sun
         name: 라이트 모드로
   features:
     - navigation.instant
