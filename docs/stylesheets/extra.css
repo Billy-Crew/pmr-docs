@@ -92,7 +92,7 @@
   background: #eef4fb;
 }
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) tr:hover td {
-  background: #23324a;
+  background: #1f2430;
 }
 
 /* 도식(figure) 컨테이너 */
@@ -289,4 +289,31 @@
 /* 현재 스킴에서 숨겨야 하는 토글은 계속 숨김 (display 오버라이드 복구) */
 [data-md-component="palette"] .md-header__button[hidden] {
   display: none;
+}
+
+/* ========================================================
+   목차(TOC, 우측 보조 내비) 상태별 색 — Figma Color styles 기반
+   default(Neutral gray) → select = hover(Brand blue 계열, 라이트 #0349c5 / 다크 #a4c2f4)
+   ======================================================== */
+/* --- 라이트 --- */
+.md-nav--secondary .md-nav__link {                 /* default: Neutral/gray1 */
+  color: #595959;
+}
+.md-nav--secondary .md-nav__link--active {         /* select: Brand/main blue */
+  color: #0349c5;
+}
+.md-nav--secondary .md-nav__link[href]:hover,
+.md-nav--secondary .md-nav__link[href]:focus {     /* hover = select: Brand/main blue */
+  color: #0349c5;
+}
+/* --- 다크 --- */
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link {          /* default: Neutral/gray2 */
+  color: #999999;
+}
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link--active {  /* select: Accent/font-light blue */
+  color: #a4c2f4;
+}
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link[href]:hover,
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link[href]:focus {  /* hover = select: Accent/font-light blue */
+  color: #a4c2f4;
 }
