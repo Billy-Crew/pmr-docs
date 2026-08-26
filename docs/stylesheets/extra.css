@@ -109,8 +109,9 @@
 .md-typeset figure svg {
   display: block;
   margin: 0 auto;
+  width: 100%;        /* 본문 폭 꽉 채움 — 좌우 여백 제거, 가로·세로 함께 확대 */
   max-width: 100%;
-  height: auto;
+  height: auto;       /* viewBox/width·height 비율로 높이 자동 (letterbox 없음) */
 }
 .md-typeset figcaption {
   font-size: 0.78rem;

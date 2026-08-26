@@ -2,8 +2,8 @@
 
 **Kuanta Control**은 다수의 PMR 노드를 한 화면에서 관제하는 시스템입니다. 각 노드는 **RESTful API를 기본 제공**하며, Control은 이 API 기반으로 동작합니다.
 
-<figure markdown="span">
-<svg viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<figure>
+<svg width="800" height="190" viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
   <defs><marker id="a6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
   <rect x="300" y="20" width="200" height="56" rx="9" fill="#101720"/>
   <text x="400" y="44" text-anchor="middle" font-size="14" font-weight="bold" fill="#7fd1b9">CONTROL 관제</text>

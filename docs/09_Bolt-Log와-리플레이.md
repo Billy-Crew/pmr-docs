@@ -9,8 +9,8 @@
 - **배속 재생**: 0.5× 정밀 분석부터 20× 부하 테스트까지
 - MMF 버퍼 페이징 기반 무손실 기록 (→ [아키텍처 개요](03_아키텍처-개요.md))
 
-<figure markdown="span">
-<svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<figure>
+<svg width="800" height="220" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
   <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
   <rect x="40" y="80" width="140" height="60" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
   <text x="110" y="106" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">PMR (운영)</text>

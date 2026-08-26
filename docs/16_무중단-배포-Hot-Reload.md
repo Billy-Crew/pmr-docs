@@ -4,8 +4,8 @@ PMR의 변경 적용은 **Stop-and-Go가 아니라 Hot-Reloading**입니다. 레
 
 ## 레거시 대비 배포 흐름
 
-<figure markdown="span">
-<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<figure>
+<svg width="820" height="200" viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
   <defs><marker id="a5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
   <text x="20" y="34" font-size="13" font-weight="bold" fill="#c2402a">C 레거시 (Stop-and-Go)</text>
   <rect x="20" y="48" width="130" height="40" rx="6" fill="#fdf3ec" stroke="#c2402a"/><text x="85" y="73" text-anchor="middle" font-size="12" fill="#8c5040">소스 수정·컴파일</text>

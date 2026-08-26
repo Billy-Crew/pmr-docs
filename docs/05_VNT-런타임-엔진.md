@@ -9,8 +9,8 @@
 - **C/C++ Native Functions** 직접 호출
 - **Single-Standalone Executable** — 단일 실행 파일 배포
 
-<figure markdown="span">
-<svg viewBox="0 0 840 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<figure>
+<svg width="840" height="260" viewBox="0 0 840 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
   <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
   <rect x="30" y="95" width="130" height="66" rx="8" fill="#f5f7f9" stroke="#cdd5de"/>
   <text x="95" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">Event Queue</text>
@@ -45,8 +45,8 @@
 - **FFI** (Foreign Function Interface) — C 구조체·함수를 제로 오버헤드로 바인딩
 - **Extension: Native Function Slots** — C/C++ 네이티브 함수 슬롯 확장
 
-<figure markdown="span">
-<svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<figure>
+<svg width="760" height="120" viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
   <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
   <rect x="20" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
   <text x="85" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.lua / .moon</text>
