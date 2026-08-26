@@ -11,26 +11,26 @@
 
 <figure>
 <svg width="800" height="220" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
-  <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
-  <rect x="40" y="80" width="140" height="60" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
-  <text x="110" y="106" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">PMR (운영)</text>
-  <text x="110" y="125" text-anchor="middle" font-size="11" fill="#69788c">실시간 시세 기록</text>
-  <rect x="300" y="70" width="170" height="80" rx="10" fill="#101720"/>
-  <text x="385" y="103" text-anchor="middle" font-size="14" font-weight="bold" fill="#7fd1b9">Bolt-Log</text>
-  <text x="385" y="124" text-anchor="middle" font-size="11" fill="#9fb0c3">Custom KV-DB · 2차 인덱스</text>
-  <rect x="600" y="14" width="160" height="50" rx="8" fill="#eaf5ef" stroke="#177245"/>
-  <text x="680" y="35" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Recovery</text>
-  <text x="680" y="53" text-anchor="middle" font-size="11" fill="#69788c">장애 구간 복구</text>
-  <rect x="600" y="85" width="160" height="50" rx="8" fill="#eef4fb" stroke="#0a4fa8"/>
-  <text x="680" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">Replay</text>
-  <text x="680" y="124" text-anchor="middle" font-size="11" fill="#69788c">0.5× ~ 20× 배속 재생</text>
-  <rect x="600" y="156" width="160" height="50" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
-  <text x="680" y="177" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#c2402a">Tester</text>
-  <text x="680" y="195" text-anchor="middle" font-size="11" fill="#69788c">부하·회귀 테스트</text>
-  <line x1="180" y1="110" x2="298" y2="110" stroke="#3d4a5c" stroke-width="2" marker-end="url(#a4)"/>
-  <line x1="470" y1="92" x2="598" y2="42" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
-  <line x1="470" y1="110" x2="598" y2="110" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
-  <line x1="470" y1="128" x2="598" y2="178" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+  <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path class="dg-arrow" d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect class="dg-box-node" x="40" y="80" width="140" height="60" rx="8" fill="#fff" stroke="#141d29" stroke-width="1.6"/>
+  <text class="dg-tx-strong" x="110" y="106" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">PMR (운영)</text>
+  <text class="dg-tx-sub" x="110" y="125" text-anchor="middle" font-size="11" fill="#69788c">실시간 시세 기록</text>
+  <rect class="dg-box-loggerbar" x="300" y="70" width="170" height="80" rx="10" fill="#101720"/>
+  <text class="dg-tx-output" x="385" y="103" text-anchor="middle" font-size="14" font-weight="bold" fill="#7fd1b9">Bolt-Log</text>
+  <text class="dg-tx-sub" x="385" y="124" text-anchor="middle" font-size="11" fill="#9fb0c3">Custom KV-DB · 2차 인덱스</text>
+  <rect class="dg-box-output" x="600" y="14" width="160" height="50" rx="8" fill="#eaf5ef" stroke="#177245"/>
+  <text class="dg-tx-output" x="680" y="35" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Recovery</text>
+  <text class="dg-tx-sub" x="680" y="53" text-anchor="middle" font-size="11" fill="#69788c">장애 구간 복구</text>
+  <rect class="dg-box-stage" x="600" y="85" width="160" height="50" rx="8" fill="#eef4fb" stroke="#0a4fa8"/>
+  <text class="dg-tx-stage" x="680" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">Replay</text>
+  <text class="dg-tx-sub" x="680" y="124" text-anchor="middle" font-size="11" fill="#69788c">0.5× ~ 20× 배속 재생</text>
+  <rect class="dg-box-input" x="600" y="156" width="160" height="50" rx="8" fill="#fdf3ec" stroke="#c2402a"/>
+  <text class="dg-tx-input" x="680" y="177" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#c2402a">Tester</text>
+  <text class="dg-tx-sub" x="680" y="195" text-anchor="middle" font-size="11" fill="#69788c">부하·회귀 테스트</text>
+  <line class="dg-arrow" x1="180" y1="110" x2="298" y2="110" stroke="#3d4a5c" stroke-width="2" marker-end="url(#a4)"/>
+  <line class="dg-arrow" x1="470" y1="92" x2="598" y2="42" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+  <line class="dg-arrow" x1="470" y1="110" x2="598" y2="110" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
+  <line class="dg-arrow" x1="470" y1="128" x2="598" y2="178" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a4)"/>
 </svg>
 <figcaption>그림 5. Bolt-Log를 축으로 한 Recovery · Replay · Tester 구성</figcaption>
 </figure>

@@ -318,3 +318,57 @@
 [data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link[href]:focus {  /* hover = select: Accent/font-light blue */
   color: #a4c2f4;
 }
+
+/* ========================================================
+   도식(Diagram) 컬러 시스템 — 역할별 색을 규칙적으로 · 라이트/다크 대응
+   SVG 요소에 dg-* 클래스를 부여하면 아래 변수로 색이 적용됨
+   (CSS는 인라인 presentation 속성보다 우선하므로 인라인 hex는 fallback)
+   ======================================================== */
+.md-typeset figure {           /* 라이트(기본) 토큰 */
+  --dg-stage-bg:#e9f0fb; --dg-stage-line:#0349c5; --dg-stage-tx:#0349c5;
+  --dg-input-bg:#fdeee7; --dg-input-line:#b23a24; --dg-input-tx:#b23a24;
+  --dg-output-bg:#e7f3ec; --dg-output-line:#177245; --dg-output-tx:#177245;
+  --dg-accent-bg:#fbf2da; --dg-accent-line:#8a6d1f; --dg-accent-tx:#8a6d1f;
+  --dg-node-bg:#f4f6f9;  --dg-node-line:#c2ccd8;
+  --dg-log-bg:#eef2f8;   --dg-log-line:#7f9dbf;
+  --dg-surface:#ffffff;
+  --dg-loggerbar-bg:#101720;
+  --dg-arrow:#3d4a5c;    --dg-arrow-muted:#7f9dbf;
+  --dg-text-strong:#141d29; --dg-text-sub:#69788c; --dg-text-onbar:#d9e2ec;
+}
+[data-md-color-scheme="slate"] .md-typeset figure {   /* 다크 토큰 */
+  --dg-stage-bg:#17233a; --dg-stage-line:#5b8dd6; --dg-stage-tx:#a4c2f4;
+  --dg-input-bg:#351d17; --dg-input-line:#d9765b; --dg-input-tx:#eba98f;
+  --dg-output-bg:#16271e; --dg-output-line:#4aa877; --dg-output-tx:#8fd3ad;
+  --dg-accent-bg:#322810; --dg-accent-line:#c9a94a; --dg-accent-tx:#e0c67a;
+  --dg-node-bg:#1b222e;  --dg-node-line:#3a4658;
+  --dg-log-bg:#1f2836;   --dg-log-line:#6d86a6;
+  --dg-surface:#232b39;
+  --dg-loggerbar-bg:#0c1119;
+  --dg-arrow:#8593a8;    --dg-arrow-muted:#6d86a6;
+  --dg-text-strong:#e9e9ea; --dg-text-sub:#9fb0c3; --dg-text-onbar:#d9e2ec;
+}
+/* 박스(rect 등): fill + stroke */
+.md-typeset figure .dg-box-stage   { fill:var(--dg-stage-bg);  stroke:var(--dg-stage-line); }
+.md-typeset figure .dg-box-input   { fill:var(--dg-input-bg);  stroke:var(--dg-input-line); }
+.md-typeset figure .dg-box-output  { fill:var(--dg-output-bg); stroke:var(--dg-output-line); }
+.md-typeset figure .dg-box-accent  { fill:var(--dg-accent-bg); stroke:var(--dg-accent-line); }
+.md-typeset figure .dg-box-node    { fill:var(--dg-node-bg);   stroke:var(--dg-node-line); }
+.md-typeset figure .dg-box-log     { fill:var(--dg-log-bg);    stroke:var(--dg-log-line); }
+.md-typeset figure .dg-box-surface { fill:var(--dg-surface); }
+.md-typeset figure .dg-box-loggerbar { fill:var(--dg-loggerbar-bg); }
+/* 텍스트: fill */
+.md-typeset figure .dg-tx-stage  { fill:var(--dg-stage-tx); }
+.md-typeset figure .dg-tx-input  { fill:var(--dg-input-tx); }
+.md-typeset figure .dg-tx-output { fill:var(--dg-output-tx); }
+.md-typeset figure .dg-tx-accent { fill:var(--dg-accent-tx); }
+.md-typeset figure .dg-tx-strong { fill:var(--dg-text-strong); }
+.md-typeset figure .dg-tx-sub    { fill:var(--dg-text-sub); }
+.md-typeset figure .dg-tx-onbar  { fill:var(--dg-text-onbar); }
+/* 화살표/선: stroke + fill(화살촉) */
+.md-typeset figure .dg-arrow        { stroke:var(--dg-arrow);        fill:var(--dg-arrow); }
+.md-typeset figure .dg-arrow-muted  { stroke:var(--dg-arrow-muted);  fill:var(--dg-arrow-muted); }
+.md-typeset figure .dg-arrow-stage  { stroke:var(--dg-stage-line);   fill:var(--dg-stage-line); }
+.md-typeset figure .dg-arrow-output { stroke:var(--dg-output-line);  fill:var(--dg-output-line); }
+.md-typeset figure .dg-arrow-input  { stroke:var(--dg-input-line);   fill:var(--dg-input-line); }
+.md-typeset figure .dg-arrow-accent { stroke:var(--dg-accent-line);  fill:var(--dg-accent-line); }

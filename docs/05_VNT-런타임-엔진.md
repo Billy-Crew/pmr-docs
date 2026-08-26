@@ -11,30 +11,30 @@
 
 <figure>
 <svg width="840" height="260" viewBox="0 0 840 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
-  <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
-  <rect x="30" y="95" width="130" height="66" rx="8" fill="#f5f7f9" stroke="#cdd5de"/>
-  <text x="95" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">Event Queue</text>
-  <text x="95" y="142" text-anchor="middle" font-size="11" fill="#69788c">수신 이벤트 적재</text>
-  <circle cx="330" cy="128" r="52" fill="#eef4fb" stroke="#0a4fa8" stroke-width="2"/>
-  <text x="330" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Event</text>
-  <text x="330" y="141" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Loop</text>
-  <rect x="530" y="20" width="180" height="58" rx="8" fill="#fff" stroke="#8a6d1f"/>
-  <text x="620" y="44" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#8a6d1f">Task Queue</text>
-  <text x="620" y="63" text-anchor="middle" font-size="11" fill="#69788c">Blocking ops → Worker Pool</text>
-  <rect x="530" y="100" width="180" height="58" rx="8" fill="#fff" stroke="#177245"/>
-  <text x="620" y="124" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Non-blocking ops</text>
-  <text x="620" y="143" text-anchor="middle" font-size="11" fill="#69788c">즉시 콜백 처리</text>
-  <rect x="530" y="180" width="180" height="58" rx="8" fill="#fff" stroke="#0a4fa8"/>
-  <text x="620" y="204" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">I/O Polling</text>
-  <text x="620" y="223" text-anchor="middle" font-size="11" fill="#69788c">epoll · kqueue (libevent)</text>
-  <rect x="742" y="30" width="80" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/>
-  <text x="782" y="49" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Worker</text>
-  <text x="782" y="61" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Thread Pool</text>
-  <line x1="160" y1="128" x2="276" y2="128" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a2)"/>
-  <line x1="372" y1="103" x2="528" y2="52" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
-  <line x1="382" y1="128" x2="528" y2="128" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
-  <line x1="372" y1="153" x2="528" y2="206" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
-  <line x1="710" y1="49" x2="740" y2="49" stroke="#3d4a5c" stroke-width="1.4" marker-end="url(#a2)"/>
+  <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path class="dg-arrow" d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect class="dg-box-node" x="30" y="95" width="130" height="66" rx="8" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text class="dg-tx-strong" x="95" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">Event Queue</text>
+  <text class="dg-tx-sub" x="95" y="142" text-anchor="middle" font-size="11" fill="#69788c">수신 이벤트 적재</text>
+  <circle class="dg-box-stage" cx="330" cy="128" r="52" fill="#eef4fb" stroke="#0a4fa8" stroke-width="2"/>
+  <text class="dg-tx-stage" x="330" y="123" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Event</text>
+  <text class="dg-tx-stage" x="330" y="141" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">Loop</text>
+  <rect class="dg-box-accent" x="530" y="20" width="180" height="58" rx="8" fill="#fff" stroke="#8a6d1f"/>
+  <text class="dg-tx-accent" x="620" y="44" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#8a6d1f">Task Queue</text>
+  <text class="dg-tx-sub" x="620" y="63" text-anchor="middle" font-size="11" fill="#69788c">Blocking ops → Worker Pool</text>
+  <rect class="dg-box-output" x="530" y="100" width="180" height="58" rx="8" fill="#fff" stroke="#177245"/>
+  <text class="dg-tx-output" x="620" y="124" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#177245">Non-blocking ops</text>
+  <text class="dg-tx-sub" x="620" y="143" text-anchor="middle" font-size="11" fill="#69788c">즉시 콜백 처리</text>
+  <rect class="dg-box-stage" x="530" y="180" width="180" height="58" rx="8" fill="#fff" stroke="#0a4fa8"/>
+  <text class="dg-tx-stage" x="620" y="204" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#0a4fa8">I/O Polling</text>
+  <text class="dg-tx-sub" x="620" y="223" text-anchor="middle" font-size="11" fill="#69788c">epoll · kqueue (libevent)</text>
+  <rect class="dg-box-node" x="742" y="30" width="80" height="38" rx="6" fill="#f5f7f9" stroke="#cdd5de"/>
+  <text class="dg-tx-strong" x="782" y="49" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Worker</text>
+  <text class="dg-tx-strong" x="782" y="61" text-anchor="middle" font-size="10.5" fill="#3d4a5c">Thread Pool</text>
+  <line class="dg-arrow" x1="160" y1="128" x2="276" y2="128" stroke="#3d4a5c" stroke-width="1.8" marker-end="url(#a2)"/>
+  <line class="dg-arrow" x1="372" y1="103" x2="528" y2="52" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line class="dg-arrow" x1="382" y1="128" x2="528" y2="128" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line class="dg-arrow" x1="372" y1="153" x2="528" y2="206" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line class="dg-arrow" x1="710" y1="49" x2="740" y2="49" stroke="#3d4a5c" stroke-width="1.4" marker-end="url(#a2)"/>
 </svg>
 <figcaption>그림 3. VNT 비동기 이벤트 루프 — Blocking 작업은 워커 풀로, I/O는 OS 네이티브 폴링으로 위임</figcaption>
 </figure>
@@ -47,23 +47,23 @@
 
 <figure>
 <svg width="760" height="120" viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
-  <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
-  <rect x="20" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
-  <text x="85" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.lua / .moon</text>
-  <text x="85" y="76" text-anchor="middle" font-size="11" fill="#69788c">스크립트 소스</text>
-  <rect x="230" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
-  <text x="295" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.bc</text>
-  <text x="295" y="76" text-anchor="middle" font-size="11" fill="#69788c">바이트코드</text>
-  <rect x="440" y="34" width="130" height="54" rx="7" fill="#eef4fb" stroke="#0a4fa8"/>
-  <text x="505" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">JIT Compiler</text>
-  <text x="505" y="76" text-anchor="middle" font-size="11" fill="#69788c">Trace JIT (런타임)</text>
-  <rect x="630" y="34" width="115" height="54" rx="7" fill="#eaf5ef" stroke="#177245"/>
-  <text x="687" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#177245">Native Code</text>
-  <text x="687" y="76" text-anchor="middle" font-size="11" fill="#69788c">C/C++ 급 속도</text>
-  <line x1="150" y1="61" x2="228" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
-  <text x="189" y="52" text-anchor="middle" font-size="10.5" fill="#69788c">Compiler</text>
-  <line x1="360" y1="61" x2="438" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
-  <line x1="570" y1="61" x2="628" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+  <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path class="dg-arrow" d="M0,0 L8,4 L0,8 z" fill="#3d4a5c"/></marker></defs>
+  <rect class="dg-box-node" x="20" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
+  <text class="dg-tx-strong" x="85" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.lua / .moon</text>
+  <text class="dg-tx-sub" x="85" y="76" text-anchor="middle" font-size="11" fill="#69788c">스크립트 소스</text>
+  <rect class="dg-box-node" x="230" y="34" width="130" height="54" rx="7" fill="#fff" stroke="#cdd5de"/>
+  <text class="dg-tx-strong" x="295" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#141d29">.bc</text>
+  <text class="dg-tx-sub" x="295" y="76" text-anchor="middle" font-size="11" fill="#69788c">바이트코드</text>
+  <rect class="dg-box-stage" x="440" y="34" width="130" height="54" rx="7" fill="#eef4fb" stroke="#0a4fa8"/>
+  <text class="dg-tx-stage" x="505" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#0a4fa8">JIT Compiler</text>
+  <text class="dg-tx-sub" x="505" y="76" text-anchor="middle" font-size="11" fill="#69788c">Trace JIT (런타임)</text>
+  <rect class="dg-box-output" x="630" y="34" width="115" height="54" rx="7" fill="#eaf5ef" stroke="#177245"/>
+  <text class="dg-tx-output" x="687" y="57" text-anchor="middle" font-size="13" font-weight="bold" fill="#177245">Native Code</text>
+  <text class="dg-tx-sub" x="687" y="76" text-anchor="middle" font-size="11" fill="#69788c">C/C++ 급 속도</text>
+  <line class="dg-arrow" x1="150" y1="61" x2="228" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+  <text class="dg-tx-sub" x="189" y="52" text-anchor="middle" font-size="10.5" fill="#69788c">Compiler</text>
+  <line class="dg-arrow" x1="360" y1="61" x2="438" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
+  <line class="dg-arrow" x1="570" y1="61" x2="628" y2="61" stroke="#3d4a5c" stroke-width="1.6" marker-end="url(#a3)"/>
 </svg>
 <figcaption>그림 4. 스크립트 → 바이트코드 → 런타임 JIT 네이티브 코드 변환 흐름</figcaption>
 </figure>
