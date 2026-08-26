@@ -88,6 +88,11 @@
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
   background: #595959;
 }
+/* 표 텍스트도 사이트 본문 폰트 사용 (인라인 코드는 monospace 유지) */
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  font-family: var(--md-text-font);
+}
 .md-typeset table:not([class]) tr:hover td {
   background: #eef4fb;
 }
@@ -112,6 +117,10 @@
   width: 100%;        /* 본문 폭 꽉 채움 — 좌우 여백 제거, 가로·세로 함께 확대 */
   max-width: 100%;
   height: auto;       /* viewBox/width·height 비율로 높이 자동 (letterbox 없음) */
+}
+/* 도식 텍스트도 사이트 본문 폰트 사용 (SVG의 generic sans-serif 대체) */
+.md-typeset figure svg text {
+  font-family: var(--md-text-font);
 }
 .md-typeset figcaption {
   font-size: 0.78rem;
